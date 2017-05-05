@@ -39,9 +39,19 @@ public class OneDatabaseTest {
 
     @Test
     public void get() {
+    	UserInfo userInfo = userInfoMapper.getByName("zhangsan");
+    	if(userInfo==null){
+    		userInfo=new UserInfo();
+    		userInfo.setName("zhangsan");
+    		userInfo.setNickName("Kevin");
+    		userInfo.setAge(1);
+    		userInfo.setSex(1);
+    		int res= userInfoMapper.insert(userInfo);
+    		Assert.assertEquals(1, res);
+    	}
         for (int i = 0; i < 10; i++) {
             long start = System.currentTimeMillis();
-            UserInfo userInfo = userInfoMapper.getByName("zhangsan");
+            userInfo = userInfoMapper.getByName("zhangsan");
             System.out.println(userInfo);
             Assert.assertTrue(userInfo != null);
             userInfo = userInfoMapper.get(userInfo.getId());

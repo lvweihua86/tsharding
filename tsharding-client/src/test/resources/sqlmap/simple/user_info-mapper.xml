@@ -22,8 +22,8 @@
 	<insert id="insert" parameterType="com.mogujie.service.tsharding.bean.UserInfo" keyProperty="id"
 		useGeneratedKeys="true">
 		<![CDATA[
-		insert into user_info(name,age,sex)
-		VALUES(#{name},#{age},#{sex});
+		insert into user_info(name,age,sex,nick_name)
+		VALUES(#{name},#{age},#{sex},#{nickName});
 		]]>
 	</insert>
 	<delete id="delete" parameterType="int">
