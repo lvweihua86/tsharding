@@ -16,7 +16,7 @@ import com.mogujie.service.tsharding.dao.ShopOrderDao;
 import com.mogujie.service.tsharding.mapper.ShopOrderMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:spring-test.xml" })
+@ContextConfiguration({ "classpath:spring-tsharding.xml" })
 public class TShardingTest {
 
 	@Autowired

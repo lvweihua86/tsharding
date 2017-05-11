@@ -18,7 +18,7 @@ import com.mogujie.trade.db.ReadWriteSplittingDataSource.NotFoundDataSource;
  * @author SHOUSHEN LUAN
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:spring-test.xml" })
+@ContextConfiguration({ "classpath:spring-tsharding.xml" })
 public class OneDatabaseTest {
     @Autowired
     private UserInfoMapper userInfoMapper;

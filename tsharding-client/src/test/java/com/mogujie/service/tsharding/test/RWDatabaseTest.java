@@ -18,7 +18,7 @@ import com.mogujie.trade.db.DataSourceRouting;
  * @author SHOUSHEN LUAN
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:spring-test.xml" })
+@ContextConfiguration({ "classpath:spring-tsharding.xml" })
 public class RWDatabaseTest {
 	@Autowired
 	private ProductMapper productMapper;
@@ -34,6 +34,7 @@ public class RWDatabaseTest {
 			Assert.isTrue(res == 1);
 			System.out.println("\tinsert use time:" + (System.currentTimeMillis() - start));
 		}
+		delete();
 	}
 
 	@Test
@@ -53,7 +54,6 @@ public class RWDatabaseTest {
 
 	}
 
-	@Test
 	public void delete() {
 		for (int i = 0; i < 1000; i++) {
 			long start = System.currentTimeMillis();

@@ -18,7 +18,7 @@ import com.mogujie.service.tsharding.dao.UserDao;
 import com.mogujie.service.tsharding.mapper.UserMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:spring-test.xml" })
+@ContextConfiguration({ "classpath:spring-tsharding.xml" })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserRouteRuleTest {
 	@Autowired
