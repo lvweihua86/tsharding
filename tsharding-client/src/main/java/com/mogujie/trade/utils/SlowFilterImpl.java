@@ -8,7 +8,7 @@ public class SlowFilterImpl implements TshardingFilter {
 	/**
 	 * slow DB标准,单位毫秒，默认值
 	 */
-	public static long times = 50;
+	private static long times = 50;
 
 	/**
 	 * 调整slow DB标准,单位毫秒
