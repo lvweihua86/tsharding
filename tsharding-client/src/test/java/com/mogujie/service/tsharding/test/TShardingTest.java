@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.mogujie.service.tsharding.bean.ShopOrder;
 import com.mogujie.service.tsharding.dao.ShopOrderDao;
 import com.mogujie.service.tsharding.mapper.ShopOrderMapper;
+import com.mogujie.trade.utils.SlowFilterImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:spring-tsharding.xml" })
@@ -24,6 +25,9 @@ public class TShardingTest {
 
 	@Autowired
 	private ShopOrderMapper shopOrderMapper;
+	{
+		SlowFilterImpl.setSlowTimes(10);
+	}
 
 	@Test
 	public void test_insert() {
