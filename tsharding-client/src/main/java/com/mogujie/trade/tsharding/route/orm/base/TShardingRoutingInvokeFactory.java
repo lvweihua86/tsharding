@@ -6,7 +6,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.util.StringUtils;
 
-import com.hivescm.tsharding.filter.AbstraceInvocation;
+import com.hivescm.tsharding.filter.AbstractInvocation;
 import com.hivescm.tsharding.filter.HandlerInterceptorAdapterFactory;
 import com.hivescm.tsharding.filter.InvocationProxy;
 import com.mogujie.trade.db.DataSourceRouting;
@@ -35,8 +35,8 @@ public class TShardingRoutingInvokeFactory implements InvokerFactory<Class<?>> {
 
 	private Invoker newSimpleInvoker() {
 		return new Invoker() {
-			private AbstraceInvocation markInvocation(final Invocation invocation) {
-				return new AbstraceInvocation(invocation) {
+			private AbstractInvocation markInvocation(final Invocation invocation) {
+				return new AbstractInvocation(invocation) {
 
 					@Override
 					public Object doInvoker() throws Throwable {
@@ -66,8 +66,8 @@ public class TShardingRoutingInvokeFactory implements InvokerFactory<Class<?>> {
 	private Invoker newShardingInvoker() {
 		return new Invoker() {
 
-			private AbstraceInvocation markInvocation(final Invocation invocation) {
-				return new AbstraceInvocation(invocation) {
+			private AbstractInvocation markInvocation(final Invocation invocation) {
+				return new AbstractInvocation(invocation) {
 					@Override
 					public Object doInvoker() throws Throwable {
 						MapperBasicConfig config = invocation.getMapperConfig();

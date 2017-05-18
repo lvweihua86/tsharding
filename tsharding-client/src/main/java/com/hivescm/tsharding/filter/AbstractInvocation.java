@@ -2,15 +2,15 @@ package com.hivescm.tsharding.filter;
 
 import com.mogujie.trade.tsharding.route.orm.base.Invocation;
 
-public abstract class AbstraceInvocation implements InvocationProxy {
+public abstract class AbstractInvocation implements InvocationProxy {
 	private Invocation invocation;
 
-	public AbstraceInvocation(Invocation invocation) {
+	public AbstractInvocation(Invocation invocation) {
 		this.invocation = invocation;
 	}
 
 	@Override
-	public Invocation getInvoker() {
+	public Invocation getInvocation() {
 		return invocation;
 	}
 }
