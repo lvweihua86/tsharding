@@ -49,4 +49,12 @@
 	<!-- <bean id="userTransactionManager" class="org.springframework.data.transaction.ChainedTransactionManager"> 
 		<constructor-arg> <list> <ref bean="user0TransactionManager" /> <ref bean="user1TransactionManager" 
 		/> </list> </constructor-arg> </bean> -->
+	<!-- 注入拦截器 -->
+	<!-- 
+	<bean class="com.hivescm.tsharding.filter.HandlerInterceptorAdapterFactory">
+		<constructor-arg ref="simpleMapperHandlerInterceptor"></constructor-arg>
+	</bean>
+	<bean id="simpleMapperHandlerInterceptor"
+		class="com.hivescm.tsharding.filter.SimpleMapperHandlerInterceptor" />
+	-->
 </beans>

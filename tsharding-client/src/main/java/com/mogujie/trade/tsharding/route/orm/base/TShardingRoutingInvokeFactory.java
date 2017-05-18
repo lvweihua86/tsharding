@@ -6,14 +6,14 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.util.StringUtils;
 
+import com.hivescm.tsharding.filter.AbstraceInvocation;
+import com.hivescm.tsharding.filter.HandlerInterceptorAdapterFactory;
+import com.hivescm.tsharding.filter.InvocationProxy;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.db.DataSourceRoutingException;
-import com.mogujie.trade.utils.SlowFilterImpl;
-import com.mogujie.trade.utils.TshardingFilter;
 
 public class TShardingRoutingInvokeFactory implements InvokerFactory<Class<?>> {
 	private SqlSessionFactoryLookup sqlSessionFactoryLookup;
-	private TshardingFilter filter = new SlowFilterImpl();
 
 	public TShardingRoutingInvokeFactory(SqlSessionFactoryLookup sqlSessionFactoryLookup) {
 		this.sqlSessionFactoryLookup = sqlSessionFactoryLookup;
@@ -35,18 +35,27 @@ public class TShardingRoutingInvokeFactory implements InvokerFactory<Class<?>> {
 
 	private Invoker newSimpleInvoker() {
 		return new Invoker() {
+			private AbstraceInvocation markInvocation(final Invocation invocation) {
+				return new AbstraceInvocation(invocation) {
+
+					@Override
+					public Object doInvoker() throws Throwable {
+						MapperBasicConfig config = invocation.getMapperConfig();
+						final Object mapper = newMyBatisMapper(config);
+						try {
+							ReadWriteSplittingContextInitializer.initReadWriteSplittingContext(invocation);
+							return invocation.getMethod().invoke(mapper, invocation.getArgs());
+						} finally {
+							ReadWriteSplittingContextInitializer.clearReadWriteSplittingContext();
+						}
+					}
+				};
+			}
+
 			@Override
 			public Object invoke(Invocation invocation) throws Throwable {
-				long start = System.currentTimeMillis();
-				MapperBasicConfig config = invocation.getMapperConfig();
-				final Object mapper = newMyBatisMapper(config);
-				try {
-					ReadWriteSplittingContextInitializer.initReadWriteSplittingContext(invocation);
-					return invocation.getMethod().invoke(mapper, invocation.getArgs());
-				} finally {
-					ReadWriteSplittingContextInitializer.clearReadWriteSplittingContext();
-					filter.filter(invocation, start, System.currentTimeMillis());
-				}
+				InvocationProxy invocationProxy = markInvocation(invocation);
+				return HandlerInterceptorAdapterFactory.doInvoker(invocationProxy);
 			}
 		};
 	}
@@ -56,19 +65,28 @@ public class TShardingRoutingInvokeFactory implements InvokerFactory<Class<?>> {
 	 */
 	private Invoker newShardingInvoker() {
 		return new Invoker() {
+
+			private AbstraceInvocation markInvocation(final Invocation invocation) {
+				return new AbstraceInvocation(invocation) {
+					@Override
+					public Object doInvoker() throws Throwable {
+						MapperBasicConfig config = invocation.getMapperConfig();
+						try {
+							ReadWriteSplittingContextInitializer.initReadWriteSplittingContext(invocation);
+							Method routeMethod = invocation.getRouteMethod();
+							final Object mapper = newMyBatisMapper(config);
+							return routeMethod.invoke(mapper, invocation.getArgs());
+						} finally {
+							ReadWriteSplittingContextInitializer.clearReadWriteSplittingContext();
+						}
+					}
+				};
+			}
+
 			@Override
 			public Object invoke(Invocation invocation) throws Throwable {
-				long start = System.currentTimeMillis();
-				MapperBasicConfig config = invocation.getMapperConfig();
-				try {
-					ReadWriteSplittingContextInitializer.initReadWriteSplittingContext(invocation);
-					Method routeMethod = invocation.getRouteMethod();
-					final Object mapper = newMyBatisMapper(config);
-					return routeMethod.invoke(mapper, invocation.getArgs());
-				} finally {
-					ReadWriteSplittingContextInitializer.clearReadWriteSplittingContext();
-					filter.filter(invocation, start, System.currentTimeMillis());
-				}
+				InvocationProxy invocationProxy = markInvocation(invocation);
+				return HandlerInterceptorAdapterFactory.doInvoker(invocationProxy);
 			}
 		};
 	}
