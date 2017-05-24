@@ -3,9 +3,9 @@ package com.mogujie.trade.tsharding.route.orm.base;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import com.fw.route.rule.RouteRule;
-import com.fw.route.rule.RouteRuleFactory;
-import com.fw.route.rule.ShardingUtils;
+import com.mogujie.route.rule.RouteRule;
+import com.mogujie.route.rule.RouteRuleFactory;
+import com.mogujie.route.rule.ShardingUtils;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.hander.MapperFactory;
 import com.mogujie.trade.hander.MapperFactory.ShardingHanderEntry;

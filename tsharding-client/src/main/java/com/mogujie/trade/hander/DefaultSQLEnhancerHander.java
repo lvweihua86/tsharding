@@ -1,6 +1,6 @@
 package com.mogujie.trade.hander;
 
-import com.fw.route.rule.RouteRuleFactory;
+import com.mogujie.route.rule.RouteRuleFactory;
 import com.mogujie.trade.db.DataSourceRouting;
 
 public class DefaultSQLEnhancerHander implements SQLEnhancerHander {

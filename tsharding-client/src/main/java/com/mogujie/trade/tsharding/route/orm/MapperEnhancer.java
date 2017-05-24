@@ -18,7 +18,7 @@ import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 import org.apache.ibatis.session.Configuration;
 
-import com.fw.route.rule.RouteRuleFactory;
+import com.mogujie.route.rule.RouteRuleFactory;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.utils.EnhanceMapperMethodUtils;
 import com.mogujie.trade.utils.TShardingLog;

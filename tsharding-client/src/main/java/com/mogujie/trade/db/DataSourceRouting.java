@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.mogujie.trade.hander.DefaultShardingHander;
-import com.fw.route.rule.RouteRule;
-import com.fw.route.rule.SimpleRouteRule;
+import com.mogujie.route.rule.RouteRule;
+import com.mogujie.route.rule.SimpleRouteRule;
 import com.mogujie.trade.hander.DefaultSQLEnhancerHander;
 import com.mogujie.trade.hander.ShardingHander;
 import com.mogujie.trade.hander.SQLEnhancerHander;

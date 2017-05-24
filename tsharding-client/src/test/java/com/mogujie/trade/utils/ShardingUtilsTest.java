@@ -3,10 +3,10 @@ package com.mogujie.trade.utils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fw.route.rule.CRC32RouteRule;
-import com.fw.route.rule.RouteRule;
-import com.fw.route.rule.ShardingUtils;
-import com.fw.route.rule.SimpleRouteRule;
+import com.mogujie.route.rule.CRC32RouteRule;
+import com.mogujie.route.rule.RouteRule;
+import com.mogujie.route.rule.ShardingUtils;
+import com.mogujie.route.rule.SimpleRouteRule;
 
 public class ShardingUtilsTest {
 	@Test
