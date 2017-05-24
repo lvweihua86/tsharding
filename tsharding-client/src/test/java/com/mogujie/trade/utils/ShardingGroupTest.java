@@ -9,7 +9,7 @@ import java.util.zip.CRC32;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fw.route.rule.RouteRuleFactory;
+import com.mogujie.route.rule.RouteRuleFactory;
 import com.mogujie.service.tsharding.bean.ShopOrder;
 import com.mogujie.service.tsharding.bean.User;
 import com.mogujie.service.tsharding.mapper.ShopOrderMapper;

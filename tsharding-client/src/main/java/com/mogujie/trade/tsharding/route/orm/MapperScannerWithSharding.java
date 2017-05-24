@@ -23,9 +23,9 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.Resource;
 
-import com.fw.route.rule.RouteRuleFactory;
-import com.fw.sharding.merge.MergeApi;
-import com.fw.sharding.merge.MergeFactory;
+import com.mogujie.route.rule.RouteRuleFactory;
+import com.mogujie.sharding.merge.MergeApi;
+import com.mogujie.sharding.merge.MergeFactory;
 import com.mogujie.trade.db.DataSourceLookup;
 import com.mogujie.trade.db.ReadWriteSplittingDataSource;
 import com.mogujie.trade.hander.MapperFactory;

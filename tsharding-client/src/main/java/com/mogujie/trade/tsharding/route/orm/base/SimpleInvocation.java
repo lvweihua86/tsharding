@@ -3,7 +3,7 @@ package com.mogujie.trade.tsharding.route.orm.base;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import com.fw.route.exception.NoSupportOperatorException;
+import com.mogujie.route.exception.NoSupportOperatorException;
 import com.mogujie.trade.db.DataSourceRouting;
 
 /**

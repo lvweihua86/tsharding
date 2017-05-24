@@ -6,11 +6,11 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.util.StringUtils;
 
-import com.hivescm.tsharding.filter.AbstractInvocation;
-import com.hivescm.tsharding.filter.HandlerInterceptorAdapterFactory;
-import com.hivescm.tsharding.filter.InvocationProxy;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.db.DataSourceRoutingException;
+import com.mogujie.tsharding.filter.AbstractInvocation;
+import com.mogujie.tsharding.filter.HandlerInterceptorAdapterFactory;
+import com.mogujie.tsharding.filter.InvocationProxy;
 
 public class TShardingRoutingInvokeFactory implements InvokerFactory<Class<?>> {
 	private SqlSessionFactoryLookup sqlSessionFactoryLookup;

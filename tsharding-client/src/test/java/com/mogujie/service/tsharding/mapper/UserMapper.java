@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.fw.route.rule.CRC32RouteRule;
+import com.mogujie.route.rule.CRC32RouteRule;
 import com.mogujie.service.tsharding.bean.User;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.tsharding.annotation.ShardingExtensionMethod;

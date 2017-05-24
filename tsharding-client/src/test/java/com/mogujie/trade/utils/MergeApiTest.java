@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fw.sharding.merge.MergeApi;
-import com.fw.sharding.merge.MergeFactory;
+import com.mogujie.sharding.merge.MergeApi;
+import com.mogujie.sharding.merge.MergeFactory;
 
 public class MergeApiTest {
 	public List<Object> list(List<Object> list) {
