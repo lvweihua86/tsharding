@@ -3,6 +3,7 @@ package com.mogujie.service.tsharding.bean;
 import java.io.Serializable;
 
 public abstract class BaseOrder implements Serializable {
+	private static final long serialVersionUID = 8641204480746103195L;
 	private int id;
 	private Long orderId;
 

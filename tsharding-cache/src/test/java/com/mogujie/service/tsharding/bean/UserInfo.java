@@ -8,55 +8,56 @@ import java.io.Serializable;
  * @CreateTime 2016年8月3日 下午2:42:15
  * @author SHOUSHEN LUAN
  */
-public class UserInfo implements Serializable{
-    private int id;
-    private String name;
-    private int age;
-    private int sex;
-    private String nickName;
+public class UserInfo implements Serializable {
+	private static final long serialVersionUID = 3061762641505954252L;
+	private int id;
+	private String name;
+	private int age;
+	private int sex;
+	private String nickName;
 
-    public int getId() {
-        return id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public int getAge() {
-        return age;
-    }
+	public int getAge() {
+		return age;
+	}
 
-    public void setAge(int age) {
-        this.age = age;
-    }
+	public void setAge(int age) {
+		this.age = age;
+	}
 
-    public int getSex() {
-        return sex;
-    }
+	public int getSex() {
+		return sex;
+	}
 
-    public void setSex(int sex) {
-        this.sex = sex;
-    }
+	public void setSex(int sex) {
+		this.sex = sex;
+	}
 
-    @Override
-    public String toString() {
-        return "{" + id + "," + name + "," + age + "," + sex + ","+nickName+"}";
-    }
+	@Override
+	public String toString() {
+		return "{" + id + "," + name + "," + age + "," + sex + "," + nickName + "}";
+	}
 
-    public String getNickName() {
-        return nickName;
-    }
+	public String getNickName() {
+		return nickName;
+	}
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
 }
