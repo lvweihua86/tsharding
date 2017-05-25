@@ -14,9 +14,8 @@ public class TshardingGeneratedCacheKeyUtils {
 	public static String generatedKey(DataSourceRouting routing, String param, Object... args) throws Throwable {
 		StringBuilder builder = new StringBuilder(20);
 		builder.append(routing.dataSource());
-		builder.append(":");
-		builder.append(routing.table());
 		builder.append("_");
+		builder.append(routing.table());
 		if (!StringUtils.isEmpty(param)) {
 			appendParameter(builder, param, args);
 		}

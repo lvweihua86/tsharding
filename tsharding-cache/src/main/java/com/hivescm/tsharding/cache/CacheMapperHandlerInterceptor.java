@@ -4,16 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hivescm.cache.client.JedisClient;
 import com.hivescm.cache.utils.RedisLogger;
+import com.hivescm.tsharding.cache.annotation.TshardingCached;
 import com.hivescm.tsharding.utils.MapperUtils;
 import com.mogujie.trade.utils.TShardingLog;
-import com.mogujie.tsharding.cache.TshardingCached;
 import com.mogujie.tsharding.filter.InvocationProxy;
 import com.mogujie.tsharding.filter.MapperHandlerInterceptor;
 
 /**
  * 支持缓存处理的拦截器
  * 
- * @author kevin
+ * @author SHOUSHEN LUAN
  *
  */
 public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
@@ -22,22 +22,35 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 
 	@Override
 	public Object invoker(InvocationProxy invocation) throws Throwable {
-		long start = System.currentTimeMillis();
 		MapperHander mapperHander = MapperUtils.getMapperHander(invocation);
-		try {
-			if (mapperHander.hasTsharingCache()) {
-				return useCacheProcess(invocation, mapperHander);
-			} else if (mapperHander.hasCacheEvicted()) {
-				try {
-					return invocation.doInvoker();
-				} finally {
-					clearCache(mapperHander);
-				}
-			} else {
-				return invocation.doInvoker();
+		if (mapperHander.hasCache()) {
+			return useCacheProcess(invocation, mapperHander);
+		} else if (mapperHander.hasCacheEvicted()) {
+			try {
+				return this.doInvoker(invocation, mapperHander);
+			} finally {
+				clearCache(mapperHander);
 			}
+		} else {
+			return this.doInvoker(invocation, mapperHander);
+		}
+	}
+
+	/**
+	 * 执行DB操作
+	 * 
+	 * @param invocation
+	 * @param mapperHander
+	 * @return
+	 * @throws Throwable
+	 */
+	private Object doInvoker(InvocationProxy invocation, MapperHander mapperHander) throws Throwable {
+		long start = System.currentTimeMillis();
+		try {
+			return invocation.doInvoker();
 		} finally {
 			long useTime = System.currentTimeMillis() - start;
+			// 每次DB操作均记录日志，日后可以根据开关控制
 			TShardingLog.getLogger().info(mapperHander.getLogInfo(useTime));
 		}
 	}
@@ -68,7 +81,7 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 				return value;
 			}
 		}
-		value = invocation.doInvoker();
+		value = this.doInvoker(invocation, mapperHander);
 		setCache(mapperHander, key, value);
 		return value;
 	}
@@ -80,19 +93,20 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 	 * @param key
 	 * @param value
 	 */
-	private void setCache(MapperHander mapperHander, String key, Object value) {
+	private boolean setCache(MapperHander mapperHander, String key, Object value) {
 		try {
 			TshardingCached tshardingCached = mapperHander.getCache();
 			if (value == null) {
 				if (tshardingCached.cacheNull()) {
-					jedisClient.setPojo(key, value, tshardingCached.expire());
+					return jedisClient.setPojo(key, TshardingCached.EMPTY, tshardingCached.expire());
 				}
 			} else {
-				jedisClient.setPojo(key, value, tshardingCached.expire());
+				return jedisClient.setPojo(key, value, tshardingCached.expire());
 			}
 		} catch (Exception e) {
 			RedisLogger.getLogger().error("setCache ERROR", e);
 		}
+		return false;
 	}
 
 }

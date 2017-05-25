@@ -8,11 +8,11 @@ import java.sql.Clob;
 import java.sql.NClob;
 
 import com.alibaba.druid.support.json.JSONWriter;
-import com.hivescm.tsharding.utils.TshardingGeneratedCacheKeyUtils;
+import com.hivescm.tsharding.cache.annotation.TshardingCacheEvicted;
+import com.hivescm.tsharding.cache.annotation.TshardingCached;
 import com.hivescm.tsharding.utils.MapperUtils;
+import com.hivescm.tsharding.utils.TshardingGeneratedCacheKeyUtils;
 import com.mogujie.trade.db.DataSourceRouting;
-import com.mogujie.tsharding.cache.TshardingCacheEvicted;
-import com.mogujie.tsharding.cache.TshardingCached;
 import com.mogujie.tsharding.filter.InvocationProxy;
 
 public final class MapperHander {
@@ -25,8 +25,6 @@ public final class MapperHander {
 
 	public MapperHander(InvocationProxy invocation) {
 		this.method = invocation.getInvocation().getMethod();
-		System.out.println(invocation.getInvocation().getMethod());
-		System.out.println(invocation.getInvocation().getMethod().getAnnotation(TshardingCached.class));
 		this.cached = this.method.getAnnotation(TshardingCached.class);
 		this.cacheEvicted = this.method.getAnnotation(TshardingCacheEvicted.class);
 		this.routing = MapperUtils.getDataSourceRouting(invocation);
@@ -38,7 +36,7 @@ public final class MapperHander {
 		return method.getAnnotation(annotation) != null;
 	}
 
-	public boolean hasTsharingCache() {
+	public boolean hasCache() {
 		return cached != null;
 	}
 
@@ -52,7 +50,7 @@ public final class MapperHander {
 	}
 
 	public String markCacheEvincted() throws Throwable {
-		String param = cached.params();
+		String param = cacheEvicted.params();
 		return TshardingGeneratedCacheKeyUtils.generatedKey(routing, param, args);
 	}
 

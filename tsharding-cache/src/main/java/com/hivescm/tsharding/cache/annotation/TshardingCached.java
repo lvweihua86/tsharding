@@ -1,5 +1,18 @@
-package com.hivescm.tsharding.cache;
+package com.hivescm.tsharding.cache.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Tsharding 缓存注解
+ * 
+ * @author SHOUSHEN LUAN
+ *
+ */
+@Target({ ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
 public @interface TshardingCached {
 	/**
 	 * 生成CACHE key的参数，每个参数之间使用“,”分割

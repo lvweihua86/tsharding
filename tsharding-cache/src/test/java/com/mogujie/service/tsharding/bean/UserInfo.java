@@ -1,12 +1,14 @@
 package com.mogujie.service.tsharding.bean;
 
+import java.io.Serializable;
+
 /**
  * 单表
  * 
  * @CreateTime 2016年8月3日 下午2:42:15
  * @author SHOUSHEN LUAN
  */
-public class UserInfo {
+public class UserInfo implements Serializable{
     private int id;
     private String name;
     private int age;

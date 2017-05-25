@@ -1,4 +1,4 @@
-package com.hivescm.startup;
+package com.hivescm.tsharding.cache;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

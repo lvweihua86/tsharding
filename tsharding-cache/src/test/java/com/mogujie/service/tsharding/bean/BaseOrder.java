@@ -1,52 +1,54 @@
 package com.mogujie.service.tsharding.bean;
 
-public abstract class BaseOrder {
-    private int id;
-    private Long orderId;
+import java.io.Serializable;
 
-    private Long buyerUserId;
+public abstract class BaseOrder implements Serializable {
+	private int id;
+	private Long orderId;
 
-    private Long sellerUserId;
+	private Long buyerUserId;
 
-    private Long shipTime;
+	private Long sellerUserId;
 
-    public Long getShipTime() {
-        return shipTime;
-    }
+	private Long shipTime;
 
-    public void setShipTime(Long shipTime) {
-        this.shipTime = shipTime;
-    }
+	public Long getShipTime() {
+		return shipTime;
+	}
 
-    public Long getOrderId() {
-        return orderId;
-    }
+	public void setShipTime(Long shipTime) {
+		this.shipTime = shipTime;
+	}
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
+	public Long getOrderId() {
+		return orderId;
+	}
 
-    public Long getBuyerUserId() {
-        return buyerUserId;
-    }
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
 
-    public void setBuyerUserId(Long buyerUserId) {
-        this.buyerUserId = buyerUserId;
-    }
+	public Long getBuyerUserId() {
+		return buyerUserId;
+	}
 
-    public Long getSellerUserId() {
-        return sellerUserId;
-    }
+	public void setBuyerUserId(Long buyerUserId) {
+		this.buyerUserId = buyerUserId;
+	}
 
-    public void setSellerUserId(Long sellerUserId) {
-        this.sellerUserId = sellerUserId;
-    }
+	public Long getSellerUserId() {
+		return sellerUserId;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setSellerUserId(Long sellerUserId) {
+		this.sellerUserId = sellerUserId;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 }

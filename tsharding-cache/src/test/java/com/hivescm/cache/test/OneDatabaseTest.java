@@ -5,13 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.hivescm.startup.Application;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.mapper.UserInfoMapper;
-import com.mogujie.trade.db.ReadWriteSplittingDataSource.NotFoundDataSource;
 
 /**
  * 单数据库
@@ -27,7 +25,7 @@ public class OneDatabaseTest {
 
 	@Test
 	public void insert() {
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 10000; i++) {
 			long start = System.currentTimeMillis();
 			UserInfo userInfo = new UserInfo();
 			userInfo.setName("kevin");
@@ -40,10 +38,9 @@ public class OneDatabaseTest {
 			System.out.println(userInfoMapper.get(userInfo.getId()));
 			System.out.println(userInfoMapper.get(userInfo.getId()));
 
-			System.out.println(userInfoMapper.delete(userInfo.getId()));
-			;
-			System.out.println(userInfoMapper.get(userInfo.getId()));
-			System.out.println(userInfoMapper.get(userInfo.getId()));
+			Assert.assertEquals(1, userInfoMapper.delete(userInfo.getId()));
+			Assert.assertEquals(null, userInfoMapper.get(userInfo.getId()));
+			Assert.assertEquals(null, userInfoMapper.get(userInfo.getId()));
 			System.out.println("\tinsert use time:" + (System.currentTimeMillis() - start));
 		}
 	}
