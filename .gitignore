@@ -1,3 +1,11 @@
 tsharding-client/.classpath
 tsharding-client/.project
 tsharding-client/.settings/
+tsharding-cache/.classpath
+tsharding-cache/.idea/
+tsharding-cache/.project
+tsharding-cache/.settings/
+tsharding-client/.idea/
+tsharding-client/target/*
+tsharding-client/tsharding-client.iml
+tsharding-client/target/*
