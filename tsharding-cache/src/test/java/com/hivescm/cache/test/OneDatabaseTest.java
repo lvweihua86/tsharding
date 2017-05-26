@@ -24,7 +24,7 @@ public class OneDatabaseTest {
 
 	@Test
 	public void insert() {
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 100; i++) {
 			long start = System.currentTimeMillis();
 			UserInfo userInfo = new UserInfo();
 			userInfo.setName("kevin");
