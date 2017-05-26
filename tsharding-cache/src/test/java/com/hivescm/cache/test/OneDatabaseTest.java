@@ -7,14 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.hivescm.startup.Application;
+import com.hivescm.tsharding.cache.Application;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.mapper.UserInfoMapper;
 
 /**
  * 单数据库
  * 
- * @CreateTime 2016年8月3日 下午12:01:01
  * @author SHOUSHEN LUAN
  */
 @RunWith(SpringJUnit4ClassRunner.class)
