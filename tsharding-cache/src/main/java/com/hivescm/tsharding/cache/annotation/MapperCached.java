@@ -6,14 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Tsharding 缓存注解
+ * Tsharding 缓存注解(只对Mapper接口方法上使用生效)
  * 
  * @author SHOUSHEN LUAN
  *
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TshardingCached {
+public @interface MapperCached {
 	/**
 	 * 生成CACHE key的参数，每个参数之间使用“,”分割
 	 * <p>

@@ -8,25 +8,25 @@ import java.sql.Clob;
 import java.sql.NClob;
 
 import com.alibaba.druid.support.json.JSONWriter;
-import com.hivescm.tsharding.cache.annotation.TshardingCacheEvicted;
-import com.hivescm.tsharding.cache.annotation.TshardingCached;
+import com.hivescm.tsharding.cache.annotation.MapperCacheEvicted;
+import com.hivescm.tsharding.cache.annotation.MapperCached;
 import com.hivescm.tsharding.utils.MapperUtils;
-import com.hivescm.tsharding.utils.TshardingGeneratedCacheKeyUtils;
+import com.hivescm.tsharding.utils.GeneratedCacheKeyUtils;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.tsharding.filter.InvocationProxy;
 
 public final class MapperHander {
 	private final Method method;
-	private final TshardingCached cached;
-	private final TshardingCacheEvicted cacheEvicted;
+	private final MapperCached cached;
+	private final MapperCacheEvicted cacheEvicted;
 	private final DataSourceRouting routing;
 	private final Object[] args;
 	private final Class<?> mapper;
 
 	public MapperHander(InvocationProxy invocation) {
 		this.method = invocation.getInvocation().getMethod();
-		this.cached = this.method.getAnnotation(TshardingCached.class);
-		this.cacheEvicted = this.method.getAnnotation(TshardingCacheEvicted.class);
+		this.cached = this.method.getAnnotation(MapperCached.class);
+		this.cacheEvicted = this.method.getAnnotation(MapperCacheEvicted.class);
 		this.routing = MapperUtils.getDataSourceRouting(invocation);
 		this.args = invocation.getInvocation().getArgs();
 		this.mapper = invocation.getInvocation().getMapperClass();
@@ -46,15 +46,15 @@ public final class MapperHander {
 
 	public String markCacheKey() throws Throwable {
 		String param = cached.params();
-		return TshardingGeneratedCacheKeyUtils.generatedKey(routing, param, args);
+		return GeneratedCacheKeyUtils.generatedKey(routing, param, args);
 	}
 
 	public String markCacheEvincted() throws Throwable {
 		String param = cacheEvicted.params();
-		return TshardingGeneratedCacheKeyUtils.generatedKey(routing, param, args);
+		return GeneratedCacheKeyUtils.generatedKey(routing, param, args);
 	}
 
-	public TshardingCached getCache() {
+	public MapperCached getCache() {
 		return this.cached;
 	}
 

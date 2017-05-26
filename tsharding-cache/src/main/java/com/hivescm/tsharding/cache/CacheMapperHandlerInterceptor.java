@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hivescm.cache.client.JedisClient;
 import com.hivescm.cache.utils.RedisLogger;
-import com.hivescm.tsharding.cache.annotation.TshardingCached;
+import com.hivescm.tsharding.cache.annotation.MapperCached;
 import com.hivescm.tsharding.utils.MapperUtils;
 import com.mogujie.trade.utils.TShardingLog;
 import com.mogujie.tsharding.filter.InvocationProxy;
@@ -75,7 +75,7 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 		String key = mapperHander.markCacheKey();
 		Object value = jedisClient.getPojo(key);
 		if (value != null) {
-			if (TshardingCached.EMPTY.equals(value)) {
+			if (MapperCached.EMPTY.equals(value)) {
 				return null;// cache null value
 			} else {
 				return value;
@@ -95,10 +95,10 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 	 */
 	private boolean setCache(MapperHander mapperHander, String key, Object value) {
 		try {
-			TshardingCached tshardingCached = mapperHander.getCache();
+			MapperCached tshardingCached = mapperHander.getCache();
 			if (value == null) {
 				if (tshardingCached.cacheNull()) {
-					return jedisClient.setPojo(key, TshardingCached.EMPTY, tshardingCached.expire());
+					return jedisClient.setPojo(key, MapperCached.EMPTY, tshardingCached.expire());
 				}
 			} else {
 				return jedisClient.setPojo(key, value, tshardingCached.expire());

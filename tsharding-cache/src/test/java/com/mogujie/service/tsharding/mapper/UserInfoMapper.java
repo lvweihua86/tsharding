@@ -1,7 +1,7 @@
 package com.mogujie.service.tsharding.mapper;
 
-import com.hivescm.tsharding.cache.annotation.TshardingCacheEvicted;
-import com.hivescm.tsharding.cache.annotation.TshardingCached;
+import com.hivescm.tsharding.cache.annotation.MapperCacheEvicted;
+import com.hivescm.tsharding.cache.annotation.MapperCached;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.db.DataSourceType;
@@ -14,10 +14,10 @@ import com.mogujie.trade.db.ReadWriteSplitting;
 public interface UserInfoMapper {
 	public int insert(UserInfo user);
 
-	@TshardingCacheEvicted(params = "0")
+	@MapperCacheEvicted(params = "0")
 	public int delete(int id);
 
-	@TshardingCached(params = "0", cacheNull = true)
+	@MapperCached(params = "0", cacheNull = true)
 	public UserInfo get(int id);
 
 	public UserInfo getByName(String name);

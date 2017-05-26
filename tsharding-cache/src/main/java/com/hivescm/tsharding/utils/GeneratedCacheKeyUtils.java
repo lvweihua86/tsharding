@@ -9,7 +9,7 @@ import com.mogujie.trade.db.DataSourceRouting;
 /**
  * 生成CACHE key工具
  */
-public class TshardingGeneratedCacheKeyUtils {
+public class GeneratedCacheKeyUtils {
 
 	public static String generatedKey(DataSourceRouting routing, String param, Object... args) throws Throwable {
 		StringBuilder builder = new StringBuilder(20);
