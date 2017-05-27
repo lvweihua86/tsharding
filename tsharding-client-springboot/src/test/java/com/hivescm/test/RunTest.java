@@ -9,7 +9,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.hivescm.tsharding.startup.Application;
 import com.mogujie.service.tsharding.bean.UserInfo;
-import com.mogujie.service.tsharding.mapper.ShopOrderMapper;
 import com.mogujie.service.tsharding.mapper.UserInfoMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -32,8 +31,4 @@ public class RunTest {
 		}
 	}
 	
-	@Autowired
-	private ShopOrderMapper shopOrderMapper;
-	
-
 }
