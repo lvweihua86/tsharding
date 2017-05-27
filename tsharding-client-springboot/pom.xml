@@ -20,6 +20,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- scan classes -->
+		<dependency>
+			<groupId>com.classes.scan</groupId>
+			<artifactId>scan-classes</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- 公共库 -->
 		<dependency>
 			<groupId>com.hivescm.open</groupId>
 			<artifactId>open_common</artifactId>
