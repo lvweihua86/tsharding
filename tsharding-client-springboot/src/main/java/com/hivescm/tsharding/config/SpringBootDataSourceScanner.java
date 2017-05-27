@@ -4,12 +4,12 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import com.mogujie.trade.db.DataSourceFactory;
 import com.mogujie.trade.db.DataSourceScanner;
 
-@Configuration()
+@Component
 public class SpringBootDataSourceScanner extends DataSourceScanner {
 
 	public SpringBootDataSourceScanner() {

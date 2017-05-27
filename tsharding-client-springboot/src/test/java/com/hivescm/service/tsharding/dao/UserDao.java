@@ -2,7 +2,7 @@ package com.hivescm.service.tsharding.dao;
 
 import java.util.List;
 
-import com.mogujie.service.tsharding.bean.User;
+import com.hivescm.service.tsharding.bean.User;
 
 public interface UserDao {
 	public int insert(List<User> users);

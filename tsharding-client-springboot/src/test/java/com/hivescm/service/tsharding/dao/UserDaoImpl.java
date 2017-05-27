@@ -8,8 +8,8 @@ import org.springframework.data.transaction.ChainedTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mogujie.service.tsharding.bean.User;
-import com.mogujie.service.tsharding.mapper.UserMapper;
+import com.hivescm.service.tsharding.bean.User;
+import com.hivescm.service.tsharding.mapper.UserMapper;
 import com.mogujie.trade.utils.TransactionManagerUtils;
 import com.mogujie.trade.utils.TransactionManagerUtils.TransactionProxy;
 

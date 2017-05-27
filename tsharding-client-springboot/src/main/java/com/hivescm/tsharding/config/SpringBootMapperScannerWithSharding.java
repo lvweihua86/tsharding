@@ -9,11 +9,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import com.hivescm.tsharding.scan.ScanMapperUtils;
 import com.mogujie.trade.tsharding.route.orm.MapperScannerWithSharding;
 
 @Order(9)
 @Configuration()
-public abstract class SpringBootMapperScannerWithSharding extends MapperScannerWithSharding {
+public class SpringBootMapperScannerWithSharding extends MapperScannerWithSharding {
 	/**
 	 * 装载Mybatis配置文件
 	 * 
@@ -59,7 +60,7 @@ public abstract class SpringBootMapperScannerWithSharding extends MapperScannerW
 	 * @return
 	 */
 	public String getMapperPackages() {
-		return "com.mogujie.service.tsharding.mapper";
+		return ScanMapperUtils.scanMapper().buildMappers();
 	}
 
 	/**
@@ -74,10 +75,9 @@ public abstract class SpringBootMapperScannerWithSharding extends MapperScannerW
 	 * 
 	 * @return
 	 */
-	public abstract String loadMapperXmlResource();
-//	{
-//		return "classpath*:sqlmap/*/*-mapper.xml";
-//	}
+	public String loadMapperXmlResource() {
+		return "classpath*:sqlmap/*-mapper.xml";
+	}
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {

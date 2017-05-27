@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mogujie.service.tsharding.bean.ShopOrder;
-import com.mogujie.service.tsharding.mapper.ShopOrderMapper;
+import com.hivescm.service.tsharding.bean.ShopOrder;
+import com.hivescm.service.tsharding.mapper.ShopOrderMapper;
 
 /**
  * @auther qigong on 6/5/15 8:52 PM.
