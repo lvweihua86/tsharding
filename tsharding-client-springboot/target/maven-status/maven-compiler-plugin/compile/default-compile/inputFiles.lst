@@ -1,6 +1,0 @@
-/Users/kevin/git/tsharding/tsharding-client-springboot/src/main/java/com/hivescm/tsharding/config/SpringBootDataSourceScanner.java
-/Users/kevin/git/tsharding/tsharding-client-springboot/src/main/java/com/hivescm/tsharding/config/SpringBootHikariDataSourceFactory.java
-/Users/kevin/git/tsharding/tsharding-client-springboot/src/main/java/com/hivescm/tsharding/config/SpringBootReadWriteSplittingAdvice.java
-/Users/kevin/git/tsharding/tsharding-client-springboot/src/main/java/com/hivescm/tsharding/config/SpringBootMapperScannerWithSharding.java
-/Users/kevin/git/tsharding/tsharding-client-springboot/src/main/java/com/hivescm/tsharding/config/SpringBootMapperShardingInitializer.java
-/Users/kevin/git/tsharding/tsharding-client-springboot/src/main/java/com/hivescm/tsharding/startup/Application.java

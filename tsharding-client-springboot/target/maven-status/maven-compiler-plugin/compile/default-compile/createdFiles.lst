@@ -1,6 +1,0 @@
-com/hivescm/tsharding/config/SpringBootHikariDataSourceFactory.class
-com/hivescm/tsharding/config/SpringBootMapperShardingInitializer.class
-com/hivescm/tsharding/startup/Application.class
-com/hivescm/tsharding/config/SpringBootDataSourceScanner.class
-com/hivescm/tsharding/config/SpringBootReadWriteSplittingAdvice.class
-com/hivescm/tsharding/config/SpringBootMapperScannerWithSharding.class
