@@ -8,11 +8,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.hivescm.tsharding.scan.ScanMapperUtils;
 import com.mogujie.trade.tsharding.route.orm.MapperScannerWithSharding;
 
+/**
+ * 处理Mapper接口
+ * 
+ * @author SHOUSHEN LUAN
+ *
+ */
 @Configuration()
-public class SpringBootMapperScannerWithSharding extends MapperScannerWithSharding {
+public abstract class SpringBootMapperScannerWithSharding extends MapperScannerWithSharding {
 	/**
 	 * 装载Mybatis配置文件
 	 * 
@@ -50,16 +55,10 @@ public class SpringBootMapperScannerWithSharding extends MapperScannerWithShardi
 
 	/**
 	 * 重写该方法设置Mybatis Mapper包路径，多个包路径使用“,“逗号分隔
-	 * <p>
-	 * <code>
-	 * </code>
-	 * </p>
 	 * 
 	 * @return
 	 */
-	public String getMapperPackages() {
-		return ScanMapperUtils.scanMapper().buildMappers();
-	}
+	public abstract String getMapperPackages();
 
 	/**
 	 * 装载Mybatis mapper.xml资源配置
