@@ -3,7 +3,7 @@ package com.hivescm.tsharding.cache;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hivescm.cache.client.JedisClient;
-import com.hivescm.cache.utils.RedisLogger;
+import com.hivescm.cache.utils.CacheLogger;
 import com.hivescm.tsharding.cache.annotation.MapperCached;
 import com.hivescm.tsharding.utils.MapperUtils;
 import com.mogujie.trade.utils.TShardingLog;
@@ -67,7 +67,7 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 			String key = mapperHander.markCacheEvincted();
 			jedisClient.delete(key);
 		} catch (Exception e) {
-			RedisLogger.getLogger().error("clearCache", e);
+			CacheLogger.getLogger().error("clearCache", e);
 		}
 	}
 
@@ -104,7 +104,7 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 				return jedisClient.setPojo(key, value, tshardingCached.expire());
 			}
 		} catch (Exception e) {
-			RedisLogger.getLogger().error("setCache ERROR", e);
+			CacheLogger.getLogger().error("setCache ERROR", e);
 		}
 		return false;
 	}
