@@ -61,7 +61,7 @@ public final class MapperHander {
 	public String getLogInfo(long useTime) {
 		StringBuilder builder = new StringBuilder(500);
 		builder.append("prefix:tsharding|");
-		builder.append("mapper:" + mapper.getSimpleName() + "." + method.getName()).append("|");
+		builder.append("mapper:" + mapper.getName() + "." + method.getName()).append("|");
 		builder.append("dataSource:" + routing.dataSource()).append("|");
 		builder.append("args:" + getParams()).append("|");
 		builder.append("useTime:" + useTime).append("|");

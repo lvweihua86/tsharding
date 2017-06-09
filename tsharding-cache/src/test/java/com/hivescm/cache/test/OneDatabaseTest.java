@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.hivescm.common.conf.Config;
+import com.hivescm.common.conf.SystemManager;
 import com.hivescm.tsharding.cache.Application;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.mapper.UserInfoMapper;
@@ -23,7 +23,7 @@ public class OneDatabaseTest {
 	@Autowired
 	private UserInfoMapper userInfoMapper;
 	static {
-		Config.project_Name = "tsharding-cache";
+		SystemManager.project_Name = "tsharding-cache";
 	}
 
 	@Test
