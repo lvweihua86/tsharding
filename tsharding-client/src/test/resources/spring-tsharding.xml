@@ -56,5 +56,6 @@
 	</bean>
 	<bean id="simpleMapperHandlerInterceptor"
 		class="com.mogujie.tsharding.filter.SimpleMapperHandlerInterceptor" />
-	
+	<!-- 分布式事物编程式API -->
+	<bean class="com.mogujie.distributed.transction.DynamicTransctionManagerFactory"></bean>
 </beans>
