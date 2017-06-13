@@ -1,7 +1,7 @@
 package com.mogujie.tsharding.filter;
 
 public class HandlerInterceptorAdapterFactory {
-	private static MapperHandlerInterceptor interceptor;
+	private static volatile MapperHandlerInterceptor interceptor;
 
 	/**
 	 * 使用者自行扩展拦截器
@@ -9,6 +9,15 @@ public class HandlerInterceptorAdapterFactory {
 	 * @param interceptor
 	 */
 	public HandlerInterceptorAdapterFactory(MapperHandlerInterceptor interceptor) {
+		HandlerInterceptorAdapterFactory.interceptor = interceptor;
+	}
+
+	/**
+	 * 注入拦截器
+	 * 
+	 * @param interceptor
+	 */
+	public static void registerInterceptor(MapperHandlerInterceptor interceptor) {
 		HandlerInterceptorAdapterFactory.interceptor = interceptor;
 	}
 
