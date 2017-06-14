@@ -2,6 +2,7 @@ package com.mogujie.distributed.transction;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -56,13 +57,29 @@ public class DynamicTransctionManager {
 	 * @return
 	 */
 	public DynamicTransctionManager addTransManager(Class<?> mapper, Object... shardingParams) {
-		if (shardingParams != null && shardingParams.length > 1) {
+		if (shardingParams == null || shardingParams.length == 0) {
 			throw new IllegalArgumentException("缺少shardingParams");
 		}
 		RouteRule<Object> routeRule = RouteRuleFactory.getRouteRule(mapper);
 		DataSourceRouting routing = mapper.getAnnotation(DataSourceRouting.class);
 		if (routing.tables() > 1 && routing.databases() > 1) {
 			for (Object param : shardingParams) {
+				addTransManager(routeRule, routing, param);
+			}
+		} else {
+			throw new IllegalArgumentException("不支持Sharding参数的Mapper:" + mapper);
+		}
+		return this;
+	}
+
+	public DynamicTransctionManager addTransManager(Class<?> mapper, List<Object>params){
+		if (params == null || params.size() == 0) {
+			throw new IllegalArgumentException("params must not empty");
+		}
+		RouteRule<Object> routeRule = RouteRuleFactory.getRouteRule(mapper);
+		DataSourceRouting routing = mapper.getAnnotation(DataSourceRouting.class);
+		if (routing.tables() > 1 && routing.databases() > 1) {
+			for (Object param : params) {
 				addTransManager(routeRule, routing, param);
 			}
 		} else {

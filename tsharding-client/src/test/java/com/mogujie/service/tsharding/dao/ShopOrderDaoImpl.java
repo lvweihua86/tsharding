@@ -5,11 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.RollbackException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mogujie.distributed.transction.ChainedTransaction;
 import com.mogujie.distributed.transction.DynamicTransctionManagerFactory;
+import com.mogujie.distributed.transction.RouteParam;
 import com.mogujie.service.tsharding.bean.Product;
 import com.mogujie.service.tsharding.bean.ShopOrder;
 import com.mogujie.service.tsharding.mapper.ProductMapper;
@@ -82,6 +86,51 @@ public class ShopOrderDaoImpl implements ShopOrderDao {
 		} else {
 			transactionProxy.rollback();
 		}
+		return true;
+	}
+
+	@Override
+	@ChainedTransaction(mapper = { ProductMapper.class, ShopOrderMapper.class }, timeout = 1)
+	public boolean chainedTransaction(@RouteParam("ShopOrderMapper.orderId") ShopOrder order, boolean isCommit) {
+		// 插入订单(订单表进行了分库分表)
+		shopOrderMapper.insertOrder(order);
+		// 获取商品
+		Product product = productMapper.getByName("Mac book");
+		// 删除商品
+		productMapper.delete(product.getId());
+		if (isCommit) {
+			return true;
+		}
+		throw new RollbackException("回滚");
+	}
+
+	@ChainedTransaction(mapper = { ProductMapper.class })
+	@Override
+	public boolean test_NoShardingParam() {
+		return true;
+	}
+
+	@ChainedTransaction(mapper = { ShopOrderMapper.class })
+	@Override
+	public boolean test_NoShardingParamErr() {
+		return true;
+	}
+
+	@ChainedTransaction(mapper = ShopOrderMapper.class)
+	@Override
+	public boolean testShardingPojoList(@RouteParam("ShopOrderMapper.orderId") List<ShopOrder> list) {
+		return true;
+	}
+
+	@ChainedTransaction(mapper = ShopOrderMapper.class)
+	@Override
+	public boolean testErrorShardingParam(String str, @RouteParam("X.orderId") List<ShopOrder> list) {
+		return true;
+	}
+
+	@ChainedTransaction(mapper = ShopOrderMapper.class)
+	@Override
+	public boolean testShardingNumList(int num, @RouteParam("ShopOrderMapper") List<Long> list) {
 		return true;
 	}
 

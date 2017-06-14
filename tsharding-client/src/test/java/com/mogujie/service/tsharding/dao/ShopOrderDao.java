@@ -13,7 +13,7 @@ public interface ShopOrderDao {
 	 * 根据店铺级订单ID获取订单信息（同一个买家）
 	 *
 	 * @param listShopOrderIds
-	 *        店铺级订单ID集合
+	 *            店铺级订单ID集合
 	 * @return List<XdShopOrder>
 	 */
 	List<ShopOrder> getShopOrderByShopOrderIds(List<Long> listShopOrderIds);
@@ -38,4 +38,23 @@ public interface ShopOrderDao {
 	 * @return
 	 */
 	public boolean programmeTransaction(ShopOrder order, boolean isCommit);
+
+	/**
+	 * 测试编程式分布式事物
+	 * 
+	 * @param order
+	 * @param isCommit
+	 * @return
+	 */
+	public boolean chainedTransaction(ShopOrder order, boolean isCommit);
+
+	public boolean test_NoShardingParamErr();
+
+	public boolean test_NoShardingParam();
+
+	public boolean testShardingPojoList(List<ShopOrder> list);
+
+	public boolean testErrorShardingParam(String str, List<ShopOrder> list);
+
+	public boolean testShardingNumList(int num, List<Long> list);
 }
