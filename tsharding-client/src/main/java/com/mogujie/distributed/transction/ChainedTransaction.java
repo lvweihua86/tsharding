@@ -11,8 +11,8 @@ import org.springframework.transaction.TransactionDefinition;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ChainedTransaction {
 	/**
-	 * 定义事物Mapper
-	 * 
+	 * 定义事物Mapper(根据Mapper定义选择开启事物管理器)
+	 *
 	 * @return
 	 */
 	public Class<?>[] mapper();
@@ -26,7 +26,7 @@ public @interface ChainedTransaction {
 	int timeout() default TransactionDefinition.TIMEOUT_DEFAULT;
 
 	/**
-	 * 默认 AnyException (任意异常)回退
+	 * 定义回滚异常类 默认 AnyException (任意异常)回退
 	 * 
 	 * @return
 	 */
