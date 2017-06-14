@@ -109,10 +109,19 @@ public class ChainedTransactionInteceptor implements Interceptor {
 			}
 		}
 
-		public boolean isRollback(Throwable e) {
+		/**
+		 * 验证当前异常是否需要回滚
+		 * 
+		 * @param throwable
+		 * @return
+		 */
+		public boolean isRollback(Throwable throwable) {
 			Class<?> clazzs[] = transaction.rollbackFor();
 			for (int i = 0; i < clazzs.length; i++) {
-				if (clazzs[i].isAssignableFrom(e.getClass())) {
+				if (AnyException.class.getName().equals(clazzs[i].getName())) {
+					return true;
+				}
+				if (clazzs[i].getName().equals(throwable.getClass().getName())) {
 					return true;
 				}
 			}

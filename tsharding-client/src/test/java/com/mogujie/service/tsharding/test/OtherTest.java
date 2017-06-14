@@ -67,7 +67,25 @@ public class OtherTest {
 	}
 
 	@Test
-	public void testChainedTransaction() {
+	public void testChainedTransactionTestRollback() {
+		for (int i = 0; i < 1000; i++) {
+			long start = System.currentTimeMillis();
+			try {
+				ShopOrder order6 = new ShopOrder();
+				order6.setOrderId(6L);
+				order6.setBuyerUserId(1006L);
+				order6.setSellerUserId(10086L);
+				order6.setShipTime(System.currentTimeMillis());
+				shopOrderDao.chainedTransactionTestRollback(order6, false);
+			} catch (Exception e) {
+				System.out.println("异常--" + e.getMessage());
+			}
+			System.out.println("use time:" + (System.currentTimeMillis() - start));
+		}
+	}
+
+	@Test
+	public void testChainedTransactionErrorNoRollback() {
 		for (int i = 0; i < 5; i++) {
 			long start = System.currentTimeMillis();
 			try {
@@ -76,9 +94,9 @@ public class OtherTest {
 				order6.setBuyerUserId(1006L);
 				order6.setSellerUserId(10086L);
 				order6.setShipTime(System.currentTimeMillis());
-				shopOrderDao.chainedTransaction(order6, false);
+				shopOrderDao.chainedTransactionTestNoRollback(order6);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("测试异常不回滚：" + e.getMessage());
 			}
 			System.out.println("use time:" + (System.currentTimeMillis() - start));
 		}
@@ -105,15 +123,9 @@ public class OtherTest {
 		List<ShopOrder> list = new ArrayList<>();
 		ShopOrder order6 = new ShopOrder();
 		order6.setOrderId(6L);
-		order6.setBuyerUserId(1006L);
-		order6.setSellerUserId(10086L);
-		order6.setShipTime(System.currentTimeMillis());
 		list.add(order6);
 		ShopOrder order7 = new ShopOrder();
 		order6.setOrderId(7L);
-		order6.setBuyerUserId(1006L);
-		order6.setSellerUserId(10086L);
-		order6.setShipTime(System.currentTimeMillis());
 		list.add(order7);
 		try {
 			shopOrderDao.testErrorShardingParam("x", list);

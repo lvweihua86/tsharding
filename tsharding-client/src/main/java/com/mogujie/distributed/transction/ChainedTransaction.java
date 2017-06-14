@@ -5,8 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.persistence.RollbackException;
-
 import org.springframework.transaction.TransactionDefinition;
 
 @Target(ElementType.METHOD)
@@ -28,9 +26,9 @@ public @interface ChainedTransaction {
 	int timeout() default TransactionDefinition.TIMEOUT_DEFAULT;
 
 	/**
-	 * 默认 RollbackException 异常回退
+	 * 默认 AnyException (任意异常)回退
 	 * 
 	 * @return
 	 */
-	Class<? extends Throwable>[] rollbackFor() default { RollbackException.class };
+	Class<? extends Throwable>[] rollbackFor() default { AnyException.class };
 }

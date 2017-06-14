@@ -90,18 +90,31 @@ public class ShopOrderDaoImpl implements ShopOrderDao {
 	}
 
 	@Override
-	@ChainedTransaction(mapper = { ProductMapper.class, ShopOrderMapper.class }, timeout = 1)
-	public boolean chainedTransaction(@RouteParam("ShopOrderMapper.orderId") ShopOrder order, boolean isCommit) {
+	@ChainedTransaction(mapper = { ProductMapper.class,
+			ShopOrderMapper.class }, timeout = 1)
+	public boolean chainedTransactionTestRollback(@RouteParam("ShopOrderMapper.orderId") ShopOrder order,
+			boolean isCommit) {
 		// 插入订单(订单表进行了分库分表)
 		shopOrderMapper.insertOrder(order);
 		// 获取商品
 		Product product = productMapper.getByName("Mac book");
 		// 删除商品
 		productMapper.delete(product.getId());
-		if (isCommit) {
-			return true;
-		}
+		System.out.println("删除Product.id:" + product.getId() + " 稍后会回滚");
 		throw new RollbackException("回滚");
+	}
+
+	@Override
+	@ChainedTransaction(mapper = { ProductMapper.class, ShopOrderMapper.class }, timeout = 1,rollbackFor=RollbackException.class)
+	public boolean chainedTransactionTestNoRollback(@RouteParam("ShopOrderMapper.orderId") ShopOrder order) {
+		// 插入订单(订单表进行了分库分表)
+		shopOrderMapper.insertOrder(order);
+		// 获取商品
+		Product product = productMapper.getByName("Mac book");
+		// 删除商品
+		productMapper.delete(product.getId());
+		System.out.println("删除Product.id:" + product.getId());
+		throw new RuntimeException();//不符合回滚策略
 	}
 
 	@ChainedTransaction(mapper = { ProductMapper.class })

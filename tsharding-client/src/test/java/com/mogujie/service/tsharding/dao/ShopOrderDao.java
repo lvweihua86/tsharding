@@ -40,13 +40,21 @@ public interface ShopOrderDao {
 	public boolean programmeTransaction(ShopOrder order, boolean isCommit);
 
 	/**
-	 * 测试编程式分布式事物
+	 * 测试运行时异常回滚事物
 	 * 
 	 * @param order
 	 * @param isCommit
 	 * @return
 	 */
-	public boolean chainedTransaction(ShopOrder order, boolean isCommit);
+	public boolean chainedTransactionTestRollback(ShopOrder order, boolean isCommit);
+
+	/**
+	 * 测试运行时异常不回滚事物
+	 * 
+	 * @param order
+	 * @return
+	 */
+	public boolean chainedTransactionTestNoRollback(ShopOrder order);
 
 	public boolean test_NoShardingParamErr();
 
