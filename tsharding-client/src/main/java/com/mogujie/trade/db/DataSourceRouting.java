@@ -36,7 +36,7 @@ public @interface DataSourceRouting {
 	 * 如果没有分表的话，这个表名称可以不用设置
 	 * </p>
 	 */
-	String table() default "";
+	String table();
 
 	/**
 	 * 单库中分表的数量

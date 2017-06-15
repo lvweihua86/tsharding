@@ -8,7 +8,7 @@ import com.mogujie.trade.db.ReadWriteSplitting;
 /**
  * 单库读写
  */
-@DataSourceRouting(dataSource = "simpleDataBase", isReadWriteSplitting = false)
+@DataSourceRouting(dataSource = "simpleDataBase",table="user_info", isReadWriteSplitting = false)
 public interface UserInfoMapper {
 	public int insert(UserInfo user);
 
