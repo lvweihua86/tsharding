@@ -11,11 +11,14 @@ import com.mogujie.trade.db.DataSourceRouting;
  */
 public class GeneratedCacheKeyUtils {
 
-	public static String generatedKey(DataSourceRouting routing, String param, Object... args) throws Throwable {
+	public static String generatedKey(DataSourceRouting routing, String key, String param, Object... args)
+			throws Throwable {
 		StringBuilder builder = new StringBuilder(20);
 		builder.append(routing.dataSource());
 		builder.append("_");
 		builder.append(routing.table());
+		builder.append("_");
+		builder.append(key);
 		if (!StringUtils.isEmpty(param)) {
 			appendParameter(builder, param, args);
 		}

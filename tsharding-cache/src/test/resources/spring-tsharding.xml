@@ -29,7 +29,8 @@
 		<property name="locations" value="classpath*:*.properties" />
 	</bean>
 
-	<context:component-scan base-package="com.mogujie.service" />
+	<context:component-scan base-package="com.mogujie" />
+	<c
 	<!-- Data Source -->
 
 	<!-- HikariCP dataSource -->

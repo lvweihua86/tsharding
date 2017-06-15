@@ -15,6 +15,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapperCached {
 	/**
+	 * 生成cache key的一部分
+	 * 
+	 * @return
+	 */
+	String key();
+
+	/**
 	 * 生成CACHE key的参数，每个参数之间使用“,”分割
 	 * <p>
 	 * 例如：“0,1.id,2.name”

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
+
 //@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 //@ComponentScan(basePackages = "com.hivescm")
 //@ImportResource(locations = { "classpath:spring-tsharding.xml" })

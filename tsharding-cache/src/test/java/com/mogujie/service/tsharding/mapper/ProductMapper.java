@@ -7,15 +7,15 @@ import com.mogujie.trade.db.DataSourceRouting;
 
 @DataSourceRouting(dataSource = "product", table = "product", isReadWriteSplitting = true)
 public interface ProductMapper {
-	@MapperCacheEvicted(params = "0.id")
+	@MapperCacheEvicted(key = "x", params = "0.id")
 	public int insert(Product product);
 
-	@MapperCacheEvicted(params = "0")
+	@MapperCacheEvicted(key = "x", params = "0")
 	public int delete(int id);
 
-	@MapperCached(params = "0")
+	@MapperCached(key = "x", params = "0")
 	public Product get(int id);
 
-	@MapperCacheEvicted(params = "0")
+	@MapperCacheEvicted(key = "x", params = "0")
 	public Product getByName(String name);
 }

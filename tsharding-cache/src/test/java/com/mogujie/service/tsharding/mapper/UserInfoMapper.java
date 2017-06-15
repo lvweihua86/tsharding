@@ -14,10 +14,10 @@ import com.mogujie.trade.db.ReadWriteSplitting;
 public interface UserInfoMapper {
 	public int insert(UserInfo user);
 
-	@MapperCacheEvicted(params = "0")
+	@MapperCacheEvicted(key = "x", params = "0")
 	public int delete(int id);
 
-	@MapperCached(params = "0", cacheNull = true)
+	@MapperCached(key = "x", params = "0", cacheNull = true)
 	public UserInfo get(int id);
 
 	public UserInfo getByName(String name);

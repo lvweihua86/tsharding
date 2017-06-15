@@ -46,12 +46,12 @@ public final class MapperHander {
 
 	public String markCacheKey() throws Throwable {
 		String param = cached.params();
-		return GeneratedCacheKeyUtils.generatedKey(routing, param, args);
+		return GeneratedCacheKeyUtils.generatedKey(routing, cached.key(), param, args);
 	}
 
 	public String markCacheEvincted() throws Throwable {
 		String param = cacheEvicted.params();
-		return GeneratedCacheKeyUtils.generatedKey(routing, param, args);
+		return GeneratedCacheKeyUtils.generatedKey(routing, cacheEvicted.key(), param, args);
 	}
 
 	public MapperCached getCache() {
