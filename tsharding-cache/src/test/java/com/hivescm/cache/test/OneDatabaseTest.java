@@ -4,12 +4,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.hivescm.common.conf.SystemManager;
-import com.hivescm.tsharding.cache.Application;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.mapper.UserInfoMapper;
 
@@ -19,7 +17,7 @@ import com.mogujie.service.tsharding.mapper.UserInfoMapper;
  * @author SHOUSHEN LUAN
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = Application.class)
+@ContextConfiguration({ "classpath:spring-tsharding.xml" })
 public class OneDatabaseTest {
 	@Autowired
 	private UserInfoMapper userInfoMapper;
