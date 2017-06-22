@@ -19,7 +19,7 @@ public @interface MapperCacheEvicted {
 	 * 
 	 * @return
 	 */
-	String key();
+	String[] key() default {};
 
 	/**
 	 * 生成CACHE key的参数，每个参数之间使用“,”分割
@@ -27,5 +27,5 @@ public @interface MapperCacheEvicted {
 	 * 例如：“0,1.id,2.name”
 	 * </p>
 	 */
-	String params() default "";
+	String[] params() default {};
 }

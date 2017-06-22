@@ -12,14 +12,16 @@ import com.mogujie.trade.db.ReadWriteSplitting;
  */
 @DataSourceRouting(dataSource = "simpleDataBase", table = "user_info", isReadWriteSplitting = false)
 public interface UserInfoMapper {
+	@MapperCacheEvicted(key = { "ABC", "ABC" }, params = { "0.name","0.nickName" })
 	public int insert(UserInfo user);
 
-	@MapperCacheEvicted(key = "x", params = "0")
+	@MapperCacheEvicted(key = { "x" }, params = { "0" })
 	public int delete(int id);
 
 	@MapperCached(key = "x", params = "0", cacheNull = true)
 	public UserInfo get(int id);
 
+	@MapperCached(key = "ABC", params = "0", cacheNull = true)
 	public UserInfo getByName(String name);
 
 	/**

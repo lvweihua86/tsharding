@@ -64,8 +64,8 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 	 */
 	private void clearCache(MapperHander mapperHander) throws Throwable {
 		try {
-			String key = mapperHander.markCacheEvincted();
-			jedisClient.delete(key);
+			String keys[] = mapperHander.markCacheEvincted();
+			jedisClient.delete(keys);
 		} catch (Exception e) {
 			CacheLogger.getLogger().error("clearCache", e);
 		}

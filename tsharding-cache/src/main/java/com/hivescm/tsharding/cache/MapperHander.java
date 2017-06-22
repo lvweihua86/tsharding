@@ -30,6 +30,16 @@ public final class MapperHander {
 		this.routing = MapperUtils.getDataSourceRouting(invocation);
 		this.args = invocation.getInvocation().getArgs();
 		this.mapper = invocation.getInvocation().getMapperClass();
+		checkParam();
+	}
+
+	private void checkParam() {
+		if (cacheEvicted != null) {
+			if (cacheEvicted.key().length != cacheEvicted.params().length) {
+				throw new IllegalArgumentException(
+						"method:" + method.getName() + " @MapperCacheEvicted(...) key参数必须和params参数长度一致。");
+			}
+		}
 	}
 
 	public boolean hasAnnotation(Class<? extends Annotation> annotation) {
@@ -49,9 +59,22 @@ public final class MapperHander {
 		return GeneratedCacheKeyUtils.generatedKey(routing, cached.key(), param, args);
 	}
 
-	public String markCacheEvincted() throws Throwable {
-		String param = cacheEvicted.params();
-		return GeneratedCacheKeyUtils.generatedKey(routing, cacheEvicted.key(), param, args);
+	/**
+	 * generated cache keys
+	 * 
+	 * @return
+	 * @throws Throwable
+	 */
+	public String[] markCacheEvincted() throws Throwable {
+		String[] params = cacheEvicted.params();
+		String[] keys = cacheEvicted.key();
+		String cache_keys[] = new String[params.length];
+		for (int i = 0; i < params.length; i++) {
+			String param = params[i];
+			String key = keys[i];
+			cache_keys[i] = GeneratedCacheKeyUtils.generatedKey(routing, key, param, args);
+		}
+		return cache_keys;
 	}
 
 	public MapperCached getCache() {

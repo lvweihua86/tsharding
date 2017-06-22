@@ -27,22 +27,19 @@ public class OneDatabaseTest {
 
 	@Test
 	public void insert() {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1; i++) {
 			long start = System.currentTimeMillis();
+			System.out.println(userInfoMapper.getByName("kevin-Luan"));
+			System.out.println(userInfoMapper.getByName("kevin-Luan"));
+			System.out.println(userInfoMapper.getByName("kevin+Luan"));
+			System.out.println(userInfoMapper.getByName("kevin+Luan"));
 			UserInfo userInfo = new UserInfo();
-			userInfo.setName("kevin");
+			userInfo.setName("kevin-Luan");
 			userInfo.setAge(10);
 			userInfo.setSex(1);
+			userInfo.setNickName("kevin+Luan");
 			int res = userInfoMapper.insert(userInfo);
 			Assert.assertTrue(res == 1);
-			userInfo = userInfoMapper.getByName("kevin");
-
-			System.out.println(userInfoMapper.get(userInfo.getId()));
-			System.out.println(userInfoMapper.get(userInfo.getId()));
-
-			Assert.assertEquals(1, userInfoMapper.delete(userInfo.getId()));
-			Assert.assertEquals(null, userInfoMapper.get(userInfo.getId()));
-			Assert.assertEquals(null, userInfoMapper.get(userInfo.getId()));
 			System.out.println("\tinsert use time:" + (System.currentTimeMillis() - start));
 		}
 	}
