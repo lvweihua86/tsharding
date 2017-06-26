@@ -2,12 +2,18 @@ package com.mogujie.distributed.transction;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
-import com.mogujie.distributed.transction.ChainedTransactionInteceptor.Entity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mogujie.trade.tsharding.route.orm.base.ReflectUtil;
 
 public class FieldUtils {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FieldUtils.class);
+
 	/**
 	 * 解析参数
 	 * 
@@ -22,14 +28,35 @@ public class FieldUtils {
 	 */
 	public static List<Object> parserParam(Class<?> mapper, Entity entity, Object[] args)
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		RouteParam routeParam = entity.getRouteParam(mapper);
-		int index = entity.getParamIndex(mapper);
-		Object param = args[index];
-		return parserParamList(param, routeParam.value());
+		List<RouteParam> routeParams = entity.getRouteParam(mapper);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("routeParams->{}", Arrays.toString(routeParams.toArray()));
+		}
+		List<Integer> paramIndex = entity.getParamIndex(mapper);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("paramIndex->{}", Arrays.toString(paramIndex.toArray()));
+		}
+		if (paramIndex.size() != routeParams.size()) {
+			throw new IllegalArgumentException("mapper:" + mapper + "解析的routeParams.size!=list.size()");
+		}
+		List<Object> results = new LinkedList<>();
+		for (int i = 0; i < routeParams.size(); i++) {
+			RouteParam routeParam = routeParams.get(i);
+			int index = paramIndex.get(i);
+			Object param = args[index];
+			results.addAll(parserParamList(param, routeParam.value()));
+		}
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("sharding.list->" + Arrays.toString(results.toArray()));
+		}
+		return results;
 	}
 
 	private static List<Object> parserParamList(Object param, String expression)
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("parserValue:{}->{}", expression, param);
+		}
 		List<Object> list = new ArrayList<>();
 		if (expression.indexOf(".") == -1) {
 			append(list, param);

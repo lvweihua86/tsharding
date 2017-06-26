@@ -7,26 +7,29 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
  * 事物管理工具
- * @author SHOUSHEN LUAN
- *         create date: 2017年1月14日
+ * 
+ * @author SHOUSHEN LUAN create date: 2017年1月14日
  */
 public class TransactionManagerUtils {
 
 	/**
 	 * 创建默认事物定义
+	 * 
 	 * @return
 	 */
 	public static DefaultTransactionDefinition getDefaultTransactionDefinition() {
 		DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
 		// 定义如隔离级别、传播行为等，即在本示例中隔离级别为ISOLATION_READ_COMMITTED（提交读），
 		definition.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-		// 传播行为为 PROPAGATION_REQUIRED（必须有事务支持，即如果当前没有事务，就新建一个事务，如果已经存在一个事务中，就加入到这个事务中）。
+		// 传播行为为
+		// PROPAGATION_REQUIRED（必须有事务支持，即如果当前没有事务，就新建一个事务，如果已经存在一个事务中，就加入到这个事务中）。
 		definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 		return definition;
 	}
 
 	/**
 	 * 创建事务管理器
+	 * 
 	 * @param tm
 	 * @return
 	 */
@@ -36,6 +39,7 @@ public class TransactionManagerUtils {
 
 	/**
 	 * 创建事务管理器
+	 * 
 	 * @param tm
 	 * @return
 	 */
@@ -51,8 +55,8 @@ public class TransactionManagerUtils {
 
 	/**
 	 * 事物管理器Proxy类
-	 * @author SHOUSHEN LUAN
-	 *         create date: 2017年1月14日
+	 * 
+	 * @author SHOUSHEN LUAN create date: 2017年1月14日
 	 */
 	public static class TransactionProxy {
 		private PlatformTransactionManager delegation;
@@ -66,15 +70,25 @@ public class TransactionManagerUtils {
 		/**
 		 * 提交事物
 		 */
-		public void commit() {
-			delegation.commit(ts);
+		public TransactionResult commit() {
+			try {
+				delegation.commit(ts);
+				return TransactionResult.commit();
+			} catch (Throwable t) {
+				return TransactionResult.commit().initCause(t);
+			}
 		}
 
 		/**
 		 * 事物回滚
 		 */
-		public void rollback() {
-			this.delegation.rollback(ts);
+		public TransactionResult rollback() {
+			try {
+				this.delegation.rollback(ts);
+				return TransactionResult.rollback();
+			} catch (Throwable t) {
+				return TransactionResult.rollback().initCause(t);
+			}
 		}
 	}
 }

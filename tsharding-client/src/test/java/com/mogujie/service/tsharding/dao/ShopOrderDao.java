@@ -1,5 +1,6 @@
 package com.mogujie.service.tsharding.dao;
 
+import com.mogujie.distributed.transction.RouteParam;
 import com.mogujie.service.tsharding.bean.ShopOrder;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public interface ShopOrderDao {
 	 * @param order
 	 * @return
 	 */
-	public boolean chainedTransactionTestNoRollback(ShopOrder order);
+	public boolean chainedTransactionTestNoRollback(ShopOrder order, long orderId);
 
 	public boolean test_NoShardingParamErr();
 

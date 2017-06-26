@@ -1,9 +1,9 @@
 package com.mogujie.distributed.transction;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ import com.mogujie.trade.utils.TransactionManagerUtils.TransactionProxy;
 public class DynamicTransctionManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DynamicTransctionManager.class);
 	private ApplicationContext applicationContext;
-	private Set<String> transManagerSet = new HashSet<>();
+	private Vector<String> transManagers = new Vector<>();
 	private PlatformTransactionManager[] transactionManagers;
 
 	protected DynamicTransctionManager(ApplicationContext applicationContext) {
@@ -41,7 +41,7 @@ public class DynamicTransctionManager {
 	 * 生成事物管理器
 	 * 
 	 * @param timeout
-	 *        unit second
+	 *            unit second
 	 * @return
 	 */
 	public TransactionProxy build(int timeout) {
@@ -72,7 +72,7 @@ public class DynamicTransctionManager {
 		return this;
 	}
 
-	public DynamicTransctionManager addTransManager(Class<?> mapper, List<Object>params){
+	public DynamicTransctionManager addTransManager(Class<?> mapper, List<Object> params) {
 		if (params == null || params.size() == 0) {
 			throw new IllegalArgumentException("params must not empty");
 		}
@@ -95,7 +95,16 @@ public class DynamicTransctionManager {
 		} else {
 			dataSource = routing.dataSource();
 		}
-		return transManagerSet.add(dataSource + "TransactionManager");
+		return addTransManager(dataSource);
+	}
+
+	private boolean addTransManager(String dataSource) {
+		String name = dataSource + "TransactionManager";
+		if (transManagers.contains(name)) {
+			return false;
+		} else {
+			return transManagers.add(name);
+		}
 	}
 
 	/**
@@ -113,20 +122,21 @@ public class DynamicTransctionManager {
 			throw new IllegalArgumentException(
 					"mapper:" + mapper + " 请使用 addTransManager(Class<?> mapper, Object... shardingParams)");
 		}
-		transManagerSet.add(dataSource + "TransactionManager");
+		addTransManager(dataSource);
 		return this;
 	}
 
 	private ChainedTransactionManager createChainedTransactionManager() {
-		transactionManagers = new PlatformTransactionManager[transManagerSet.size()];
-		int i = 0;
-		for (String name : transManagerSet) {
+		transactionManagers = new PlatformTransactionManager[transManagers.size()];
+		int index=0;
+		for (int i = transManagers.size() - 1; i >= 0; i--) {
+			String name= transManagers.get(i);
 			PlatformTransactionManager ptm = applicationContext.getBean(name, PlatformTransactionManager.class);
-			transactionManagers[i] = ptm;
-			i++;
+			transactionManagers[index] = ptm;
+			index++;
 		}
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info("dynamic create chained transction manager:" + Arrays.toString(transManagerSet.toArray()));
+			LOGGER.info("dynamic create chained transction manager:" + Arrays.toString(transManagers.toArray()));
 		}
 		return new ChainedTransactionManager(transactionManagers);
 	}

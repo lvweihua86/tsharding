@@ -71,6 +71,9 @@
 		]]>
 	 </insert>
 	 <delete id="deleteByOrderId" parameterType="long">
-	 	DELETE FROM tradeorder WHERE orderId=#{orderId}
+	 	DELETE FROM tradeorder WHERE orderId=#{orderId} limit 1
 	 </delete>
+	 <update id="update" parameterType="com.mogujie.service.tsharding.bean.ShopOrder">
+	 	UPDATE tradeorder set shipTime=#{order.shipTime} where orderId=#{order.orderId}
+	 </update>
 </mapper>

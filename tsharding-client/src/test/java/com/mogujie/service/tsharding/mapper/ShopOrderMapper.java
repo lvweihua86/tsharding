@@ -30,4 +30,7 @@ public interface ShopOrderMapper {
 	@ShardingExtensionMethod
 	public int deleteByOrderId(@ShardingParam @Param("orderId") Long orderId);
 
+	@ShardingExtensionMethod
+	public int update(@ShardingParam("orderId") @Param("order") ShopOrder order);
+
 }

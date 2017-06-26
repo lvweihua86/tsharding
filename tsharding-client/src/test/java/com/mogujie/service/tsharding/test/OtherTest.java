@@ -1,9 +1,13 @@
 package com.mogujie.service.tsharding.test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
 
-import org.apache.logging.log4j.core.pattern.EncodingPatternConverter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +18,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.mogujie.service.tsharding.bean.ShopOrder;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.dao.ShopOrderDao;
-import com.mogujie.service.tsharding.mapper.ShopOrderMapper;
 import com.mogujie.service.tsharding.mapper.UserInfoMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -94,7 +97,7 @@ public class OtherTest {
 				order6.setBuyerUserId(1006L);
 				order6.setSellerUserId(10086L);
 				order6.setShipTime(System.currentTimeMillis());
-				shopOrderDao.chainedTransactionTestNoRollback(order6);
+				shopOrderDao.chainedTransactionTestNoRollback(order6, 35);
 			} catch (Exception e) {
 				System.out.println("测试异常不回滚：" + e.getMessage());
 			}
@@ -164,4 +167,5 @@ public class OtherTest {
 		list.add(5L);
 		shopOrderDao.testShardingNumList(1, list);
 	}
+
 }

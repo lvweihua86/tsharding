@@ -1,5 +1,6 @@
 package com.mogujie.distributed.transction;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -17,8 +18,10 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.mogujie.route.exception.NoSupportOperatorException;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.utils.TransactionManagerUtils.TransactionProxy;
+import com.mogujie.trade.utils.TransactionResult;
 
 /**
  * 链式事物管理拦截器
@@ -56,131 +59,33 @@ public class ChainedTransactionInteceptor implements Interceptor {
 			}
 		}
 		TransactionProxy transactionProxy = transctionManager.build(entity.getTimeout());
+		Throwable throwable = null;
+		Object result = null;
 		try {
-			Object result = pjp.proceed(pjp.getArgs());
-			transactionProxy.commit();
-			return result;
+			result = pjp.proceed(pjp.getArgs());
 		} catch (Throwable e) {
-			if (entity.isRollback(e)) {
-				transactionProxy.rollback();
+			throwable = e;// DB操作异常
+		}
+		if (throwable != null && entity.isRollback(throwable)) {
+			TransactionResult res = transactionProxy.rollback();
+			if (res.isCompleted()) {
+				// 完成回退操作，将异常传递到调用者
+				throw throwable;
 			} else {
-				transactionProxy.commit();
+				entity.doInvokeUnfinishedCallback(pjp, res);
+				throw res.getCause();// 将异常传递到调用者
 			}
-			throw e;
-		}
-	}
-
-	class Entity {
-		private final String staticPart;
-		final Method method;
-		final ChainedTransaction transaction;
-		final Map<Class<?>, Integer> mapper_paramIndex = new HashMap<>();
-		private List<Class<?>> shardingMappers = new ArrayList<>();
-
-		public Entity(ProceedingJoinPoint pjp) {
-			staticPart = pjp.toLongString();
-			this.method = ((MethodSignature) pjp.getSignature()).getMethod();
-			this.transaction = method.getAnnotation(ChainedTransaction.class);
-			check();
-		}
-
-		public Entity(Method method, String staticPart) {
-			this.staticPart = staticPart;
-			this.method = method;
-			this.transaction = method.getAnnotation(ChainedTransaction.class);
-			check();
-		}
-
-		public RouteParam getRouteParam(Class<?> mapper) {
-			int index = this.getParamIndex(mapper);
-			Parameter parameter = method.getParameters()[index];
-			RouteParam routeParam = parameter.getAnnotation(RouteParam.class);
-			if (routeParam == null) {
-				throw new IllegalArgumentException(staticPart + "注解mapper:`" + mapper + "`没有找到映射@RouteParam");
-			}
-			return routeParam;
-		}
-
-		public int getParamIndex(Class<?> mapper) {
-			if (mapper_paramIndex.containsKey(mapper)) {
-				return mapper_paramIndex.get(mapper);
+		} else {
+			TransactionResult res = transactionProxy.commit();
+			if (res.isCompleted()) {
+				if (throwable != null) {
+					// 事物提交成功，将异常传递到调用者
+					throw throwable;
+				}
+				return result;// 完成提交事物
 			} else {
-				throw new IllegalArgumentException(staticPart + "没有找到Mapper:`" + mapper + "`");
-			}
-		}
-
-		/**
-		 * 验证当前异常是否需要回滚
-		 * 
-		 * @param throwable
-		 * @return
-		 */
-		public boolean isRollback(Throwable throwable) {
-			Class<?> clazzs[] = transaction.rollbackFor();
-			for (int i = 0; i < clazzs.length; i++) {
-				if (AnyException.class.getName().equals(clazzs[i].getName())) {
-					return true;
-				}
-				if (clazzs[i].getName().equals(throwable.getClass().getName())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public Class<?>[] getMapper() {
-			return transaction.mapper();
-		}
-
-		public int getTimeout() {
-			return transaction.timeout();
-		}
-
-		private void check() {
-			Class<?>[] mappers = transaction.mapper();
-			if (mappers == null || mappers.length == 0) {
-				throw new IllegalArgumentException(staticPart + ".mappers must not empty");
-			}
-			for (Class<?> mapper : mappers) {
-				DataSourceRouting routing = mapper.getAnnotation(DataSourceRouting.class);
-				if (routing == null) {
-					throw new IllegalArgumentException(staticPart + ".无效的Mapper:" + mapper);
-				}
-				if (routing.databases() > 1) {
-					shardingMappers.add(mapper);
-				}
-			}
-			Parameter[] parameters = method.getParameters();
-			for (int i = 0; i < parameters.length; i++) {
-				RouteParam routeParam = parameters[i].getAnnotation(RouteParam.class);
-				if (routeParam != null) {
-					Class<?> mapper = loadShardingMapperAndRemove(routeParam.value());
-					mapper_paramIndex.put(mapper, i);
-				}
-			}
-			if (shardingMappers.size() > 0) {
-				throw new IllegalArgumentException(staticPart + ".Mapper:`" + Arrays.toString(shardingMappers.toArray())
-						+ "` missing @RouteParam(...)");
-			}
-		}
-
-		private Class<?> loadShardingMapperAndRemove(String expression) {
-			String name = getMapperName(expression);
-			for (Class<?> clazz : shardingMappers) {
-				if (clazz.getSimpleName().equals(name)) {
-					shardingMappers.remove(clazz);
-					return clazz;
-				}
-			}
-			throw new IllegalArgumentException(staticPart + ".invalid @RouteParam(value='" + name + "')");
-		}
-
-		private String getMapperName(String str) {
-			int index = str.indexOf(".");
-			if (index == -1) {
-				return str;
-			} else {
-				return str.substring(0, index);
+				entity.doInvokeUnfinishedCallback(pjp, res);
+				throw res.getCause();// 将异常传递到调用者
 			}
 		}
 	}
