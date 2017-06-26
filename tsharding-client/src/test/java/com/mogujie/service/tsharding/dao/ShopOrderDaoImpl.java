@@ -1,8 +1,10 @@
 package com.mogujie.service.tsharding.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.RollbackException;
@@ -12,12 +14,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mogujie.distributed.transction.ChainedTransaction;
+import com.mogujie.distributed.transction.DefaultUnfinishedCallback;
 import com.mogujie.distributed.transction.DynamicTransctionManagerFactory;
+import com.mogujie.distributed.transction.ProxyMethodMeta;
 import com.mogujie.distributed.transction.RouteParam;
 import com.mogujie.service.tsharding.bean.Product;
 import com.mogujie.service.tsharding.bean.ShopOrder;
 import com.mogujie.service.tsharding.mapper.ProductMapper;
 import com.mogujie.service.tsharding.mapper.ShopOrderMapper;
+import com.mogujie.trade.utils.TransactionResult;
 import com.mogujie.trade.utils.TransactionManagerUtils.TransactionProxy;
 
 /**
@@ -125,6 +130,12 @@ public class ShopOrderDaoImpl implements ShopOrderDao {
 		throw new RuntimeException();// 不符合回滚策略
 	}
 
+	void chainedTransactionTestNoRollback_Callback(ProxyMethodMeta proxyMethod){
+		System.out.println("--->>>");
+		DefaultUnfinishedCallback.unfinishedCallback(proxyMethod);
+	}
+
+	
 	@ChainedTransaction(mapper = { ProductMapper.class })
 	@Override
 	public boolean test_NoShardingParam() {

@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.mogujie.trade.utils.TransactionResult;
 
-class DefaultUnfinishedCallback {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUnfinishedCallback.class);
+public class DefaultUnfinishedCallback {
+	public static final Logger LOGGER = LoggerFactory.getLogger(DefaultUnfinishedCallback.class);
 	private static Gson gson = new Gson();
 
 	public static void unfinishedCallback(ProxyMethodMeta proxyMethod) {
