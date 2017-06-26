@@ -1,11 +1,5 @@
 package com.mogujie.distributed.transction;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,11 +8,9 @@ import org.aopalliance.intercept.Interceptor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.mogujie.route.exception.NoSupportOperatorException;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.utils.TransactionManagerUtils.TransactionProxy;
 import com.mogujie.trade.utils.TransactionResult;

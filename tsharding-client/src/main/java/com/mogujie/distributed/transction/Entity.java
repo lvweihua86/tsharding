@@ -45,7 +45,7 @@ class Entity {
 				unfinishedCallback.invoke(target, pmm);
 			}
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
+			LOGGER.error("doInvokeUnfinishedCallback", e);
 		}
 	}
 
