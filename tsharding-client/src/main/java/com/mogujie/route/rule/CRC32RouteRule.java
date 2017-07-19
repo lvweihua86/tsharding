@@ -1,6 +1,7 @@
 package com.mogujie.route.rule;
 
 import com.mogujie.trade.db.DataSourceRouting;
+
 /**
  * <b>根据CRC32算法实现路由</b>
  * <p>
@@ -12,6 +13,7 @@ import com.mogujie.trade.db.DataSourceRouting;
  * <li>路由Table：CRC32(value)%DataSourceRouting.tables</li>
  * <li>获得Table table0~tableN-1</li>
  * </ul>
+ * 
  * @author SHOUSHEN LUAN
  */
 public class CRC32RouteRule extends AbstractRouteRule<String> implements RouteRule<String> {
@@ -58,8 +60,9 @@ public class CRC32RouteRule extends AbstractRouteRule<String> implements RouteRu
 			long crc32Val = calcCRC32(shardingVal);
 			long res = crc32Val % routing.tables();
 			return (int) res;
+		} else {
+			return 0;
 		}
-		throw new IllegalArgumentException("注解实例的分表数量必须大于1");
 	}
 
 }
