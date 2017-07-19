@@ -19,9 +19,9 @@ public class ShardingUtils {
 	 * 根据shardingTableSuffix生成bit位表后缀，长度不够补0
 	 * 
 	 * @param shardingTableSuffix
-	 *        数据散列表后缀
+	 *            数据散列表后缀
 	 * @param bit
-	 *        生成的位数
+	 *            生成的位数
 	 * @return
 	 */
 	final static String fillBit(long shardingTableSuffix, int bit) {
@@ -106,9 +106,21 @@ public class ShardingUtils {
 
 	public static Type getGenericityType(RouteRule<?> rule) {
 		Type[] types = rule.getClass().getGenericInterfaces();
-		ParameterizedType parameterizedType = (ParameterizedType) types[0];
-		Type type = parameterizedType.getActualTypeArguments()[0];
-		return type;
+		Type shardingType=Long.TYPE;
+		if (types.length == 0) {
+			// 从继承的父类泛型中获取类型 form super class<Long>
+			ParameterizedType parameterizedType = (ParameterizedType) rule.getClass().getGenericSuperclass();
+			shardingType= parameterizedType.getActualTypeArguments()[0];
+		}
+		if (types.length > 0) {
+			ParameterizedType parameterizedType = (ParameterizedType) types[0];
+			shardingType = parameterizedType.getActualTypeArguments()[0];
+		}
+		if (!"T".equals(shardingType.getTypeName())) {
+			return shardingType;
+		}
+		// 默认使用Long
+		return Long.TYPE;
 	}
 
 	@SuppressWarnings("unchecked")

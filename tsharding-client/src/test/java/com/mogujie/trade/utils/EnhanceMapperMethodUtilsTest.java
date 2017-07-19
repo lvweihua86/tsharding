@@ -35,15 +35,15 @@ public class EnhanceMapperMethodUtilsTest {
 	@Test
 	public void test_markMapperStatement() {
 		String msId = "com.mogujie.service.tsharding.mapper.UserMapper.insertBatch";
-		String res = EnhanceMapperMethodUtils.markMappedStatement(msId, "0000", 10000);
+		String res = EnhanceMapperMethodUtils.getMappedStatement(msId, "0000", 10000);
 		Assert.assertEquals("com.mogujie.service.tsharding.mapper.UserMapper$Sharding$insertBatch$0.insertBatch0000", res);
-		res = EnhanceMapperMethodUtils.markMappedStatement(msId, "0888", 2048);
+		res = EnhanceMapperMethodUtils.getMappedStatement(msId, "0888", 2048);
 		Assert.assertEquals("com.mogujie.service.tsharding.mapper.UserMapper$Sharding$insertBatch$1.insertBatch0888", res);
 
-		res = EnhanceMapperMethodUtils.markMappedStatement(msId, "0511", 2048);
+		res = EnhanceMapperMethodUtils.getMappedStatement(msId, "0511", 2048);
 		Assert.assertEquals("com.mogujie.service.tsharding.mapper.UserMapper$Sharding$insertBatch$0.insertBatch0511", res);
 
-		res = EnhanceMapperMethodUtils.markMappedStatement(msId, "0512", 2048);
+		res = EnhanceMapperMethodUtils.getMappedStatement(msId, "0512", 2048);
 		Assert.assertEquals("com.mogujie.service.tsharding.mapper.UserMapper$Sharding$insertBatch$1.insertBatch0512", res);
 
 	}

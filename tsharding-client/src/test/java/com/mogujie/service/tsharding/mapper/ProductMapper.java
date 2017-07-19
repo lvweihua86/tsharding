@@ -14,5 +14,5 @@ public interface ProductMapper {
 	public Product get(int id);
 
 	@ReadWriteSplitting(DataSourceType.master)
-	public Product getByName(String name);
+	public Product testFormMasterLoader(String name);
 }

@@ -29,15 +29,19 @@ public class DefaultShardingHander implements ShardingHander {
 		this.shardingParam = entry.getShardingParam();
 		this.rawShardingValue = entry.getRouteParam(args);
 		RouteRule<Object> rule = RouteRuleFactory.getRouteRule(mappendClass);
-		value = ShardingUtils.parserShardingValue(rawShardingValue, shardingParam.value(),rule);
+		value = ShardingUtils.parserShardingValue(rawShardingValue, shardingParam.value(), rule);
 	}
 
 	@Override
 	public String schemaName() {
 		try {
-			Object value = getShardingValue();
-			RouteRule<Object> sharding = RouteRuleFactory.getRouteRule(mappendClass);
-			return sharding.calculateSchemaName(routing, value);
+			if (routing.databases() > 1) {
+				Object value = getShardingValue();
+				RouteRule<Object> sharding = RouteRuleFactory.getRouteRule(mappendClass);
+				return sharding.calculateSchemaName(routing, value);
+			} else {
+				return routing.dataSource();
+			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
@@ -46,9 +50,13 @@ public class DefaultShardingHander implements ShardingHander {
 	@Override
 	public String getTableNameSuffix() {
 		try {
-			Object value = getShardingValue();
-			RouteRule<Object> sharding = RouteRuleFactory.getRouteRule(mappendClass);
-			return sharding.calculateTableNameSuffix(routing, value);
+			if (routing.tables() > 1) {
+				Object value = getShardingValue();
+				RouteRule<Object> sharding = RouteRuleFactory.getRouteRule(mappendClass);
+				return sharding.calculateTableNameSuffix(routing, value);
+			} else {
+				return "0";
+			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}

@@ -14,9 +14,13 @@ public class DefaultSQLEnhancerHander implements SQLEnhancerHander {
 
 	@Override
 	public String getTable(long value) {
-		String table = routing.table();
-		String tableSuffix = RouteRuleFactory.getRouteRule(mappedClass).fillBit(value);
-		return table + tableSuffix;
+		if (routing.tables() > 1) {
+			String table = routing.table();
+			String tableSuffix = RouteRuleFactory.getRouteRule(mappedClass).fillBit(value);
+			return table + tableSuffix;
+		} else {
+			return routing.table();
+		}
 	}
 
 	@Override
@@ -34,6 +38,7 @@ public class DefaultSQLEnhancerHander implements SQLEnhancerHander {
 
 	/**
 	 * 格式化SQL语句
+	 * 
 	 * @param sql
 	 * @return
 	 */

@@ -2,8 +2,8 @@ package com.mogujie.trade.utils;
 
 /**
  * 增强Mapper工具
- * @author SHOUSHEN LUAN
- *         create date: 2017年1月14日
+ * 
+ * @author SHOUSHEN LUAN create date: 2017年1月14日
  */
 public class EnhanceMapperMethodUtils {
 	/**
@@ -13,6 +13,7 @@ public class EnhanceMapperMethodUtils {
 
 	/**
 	 * 分段处理
+	 * 
 	 * @param tables
 	 * @return
 	 */
@@ -32,6 +33,7 @@ public class EnhanceMapperMethodUtils {
 
 	/**
 	 * 是否进行分段扩展
+	 * 
 	 * @param tables
 	 * @return
 	 */
@@ -91,6 +93,7 @@ public class EnhanceMapperMethodUtils {
 		 * 获取增强方法片段的起始点
 		 * <p/>
 		 * 其实数据为0开始
+		 * 
 		 * @return
 		 */
 		public int getStart() {
@@ -99,6 +102,7 @@ public class EnhanceMapperMethodUtils {
 
 		/**
 		 * 获取增强方法片段的结束点
+		 * 
 		 * @return
 		 */
 		public int getEnd() {
@@ -115,7 +119,9 @@ public class EnhanceMapperMethodUtils {
 
 		/**
 		 * 验证表后缀是否在当前片段中
-		 * @param tableSuffix 表后缀
+		 * 
+		 * @param tableSuffix
+		 *            表后缀
 		 * @return
 		 */
 		public boolean isCurrentSegemation(int tableSuffix) {
@@ -130,30 +136,46 @@ public class EnhanceMapperMethodUtils {
 	}
 
 	/**
-	 * mark Sharding method class
+	 * 获取 Sharding method class
+	 * 
 	 * @param mapperClassName
 	 * @param methodName
 	 * @param segemation
 	 * @return
 	 */
-	public static String markShardingClass(String mapperClassName, String methodName, int segemation) {
+	public static String getShardingClass(String mapperClassName, String methodName, int segemation) {
 		return mapperClassName + "$Sharding$" + methodName + "$" + segemation;
 	}
 
 	/**
-	 * mark Sharding method class
+	 * Sharding method class
+	 * 
 	 * @param mapperClassName
 	 * @param methodName
 	 * @param segemation
 	 * @return
 	 */
-	public static String markShardingClass(String mapperClassName, String methodName, MethodSegemation segemation) {
-		return markShardingClass(mapperClassName, methodName, segemation.getSection());
+	public static String getShardingClass(String mapperClassName, String methodName) {
+		return mapperClassName + "$Sharding$" + methodName;
+	}
+
+	/**
+	 * mark Sharding method class
+	 * 
+	 * @param mapperClassName
+	 * @param methodName
+	 * @param segemation
+	 * @return
+	 */
+	public static String getShardingClass(String mapperClassName, String methodName, MethodSegemation segemation) {
+		return getShardingClass(mapperClassName, methodName, segemation.getSection());
 	}
 
 	/**
 	 * 根据分表后缀获取分片段落
-	 * @param tableSuffix 分表后缀
+	 * 
+	 * @param tableSuffix
+	 *            分表后缀
 	 */
 	public static int getSegemation(int tables, int tableSuffix) {
 		Entity entity = EnhanceMapperMethodUtils.segmentation(tables);
@@ -168,17 +190,18 @@ public class EnhanceMapperMethodUtils {
 
 	/**
 	 * generated mapper statement
+	 * 
 	 * @param ms
 	 * @param tableSuffix
 	 * @param tables
 	 * @return
 	 */
-	public static String markMappedStatement(String msId, String tableSuffix, int tables) {
+	public static String getMappedStatement(String msId, String tableSuffix, int tables) {
 		String mapper = parserMapper(msId);
 		String method = getMethodName(msId);
 		int table_suffix = Integer.parseInt(tableSuffix.trim());
 		int segemation = EnhanceMapperMethodUtils.getSegemation(tables, table_suffix);
-		String newMsId = markShardingClass(mapper, method, segemation);
+		String newMsId = getShardingClass(mapper, method, segemation);
 		return newMsId + "." + method + tableSuffix;
 	}
 
@@ -189,6 +212,7 @@ public class EnhanceMapperMethodUtils {
 
 	/**
 	 * 获取执行的方法名
+	 * 
 	 * @param msId
 	 * @return
 	 */

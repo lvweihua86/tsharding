@@ -13,6 +13,7 @@ import com.mogujie.trade.hander.ShardingHander;
 import com.mogujie.trade.utils.EnhanceMapperMethodUtils;
 
 class ShardingInvocation implements Invocation {
+			 
 	/**
 	 * Mapper class
 	 */
@@ -52,10 +53,10 @@ class ShardingInvocation implements Invocation {
 		this.rawShardingParam = shardingHander.getRouteParam(args);
 		this.rule = RouteRuleFactory.getRouteRule(shardingHander.getMappedClass());
 		this.routeParam = parserShardingValue();
-		this.shardingMeta = markShardingMeta();
-		this.shardingMapper = markShardingMapper();
+		this.shardingMeta = makeShardingMeta();
+		this.shardingMapper = makeShardingMapper();
 		this.config = markMapperBasicConfig();
-		this.routeMethod = markRouteMethod();
+		this.routeMethod = makeRouteMethod();
 	}
 
 	private MapperBasicConfig markMapperBasicConfig() {
@@ -67,7 +68,7 @@ class ShardingInvocation implements Invocation {
 		return ShardingUtils.parserShardingValue(rawShardingParam, fieldName, rule);
 	}
 
-	private ShardingMeta markShardingMeta() throws IllegalArgumentException, IllegalAccessException {
+	private ShardingMeta makeShardingMeta() throws IllegalArgumentException, IllegalAccessException {
 		ShardingHander hander = getShardingHander();
 		ShardingMeta shardingMeta = new ShardingMeta();
 		shardingMeta.setShardingParam(hander.getShardingValue());
@@ -105,10 +106,15 @@ class ShardingInvocation implements Invocation {
 		return this.routeMethod;
 	}
 
-	private Method markRouteMethod() throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException,
+	private Method makeRouteMethod() throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException,
 			NoSuchMethodException, SecurityException {
 		ShardingMeta shardingMeta = getShardingMeta();
 		Class<?> shardingMapper = getShardingMappingClass();
+//		Method[] methods = shardingMapper.getDeclaredMethods();
+//		LOGGER.warn(rawMethod.getName() + shardingMeta.getTableSuffix());
+//		for (Method m : methods) {
+//			LOGGER.warn(m.getName());
+//		}
 		Method shareMethod = shardingMapper.getMethod(rawMethod.getName() + shardingMeta.getTableSuffix(),
 				rawMethod.getParameterTypes());
 		return shareMethod;
@@ -118,8 +124,8 @@ class ShardingInvocation implements Invocation {
 		DataSourceRouting routing = shardingHander.getRouting();
 		Class<?> handerClass = routing.shardingHander();
 		try {
-			ShardingHander hander = (ShardingHander) handerClass.getConstructor(Class.class, Method.class, Object[].class)
-					.newInstance(rawMapper, rawMethod, args);
+			ShardingHander hander = (ShardingHander) handerClass
+					.getConstructor(Class.class, Method.class, Object[].class).newInstance(rawMapper, rawMethod, args);
 			return hander;
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
@@ -138,14 +144,15 @@ class ShardingInvocation implements Invocation {
 
 	/**
 	 * 创建shardingMapper class
+	 * 
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	private Class<?> markShardingMapper() throws ClassNotFoundException {
+	private Class<?> makeShardingMapper() throws ClassNotFoundException {
 		String mapperClassName = rawMapper.getCanonicalName();
 		// 计算分段
 		int segemation = rule.getSegemation(shardingHander.getRouting(), routeParam);
-		String shardingMapper = EnhanceMapperMethodUtils.markShardingClass(mapperClassName, rawMethod.getName(),
+		String shardingMapper = EnhanceMapperMethodUtils.getShardingClass(mapperClassName, rawMethod.getName(),
 				segemation);
 		// 增强后的接口
 		return Class.forName(shardingMapper);

@@ -41,13 +41,11 @@ public class RWDatabaseTest {
 	public void get() {
 		for (int i = 0; i < 1000; i++) {
 			long start = System.currentTimeMillis();
-			Product product = productMapper.getByName("Mac book 123");
+			Product product = productMapper.testFormMasterLoader("Mac book 123");
 			Assert.isNull(product);
-			product = productMapper.getByName("Iphone5");
+			product = productMapper.testFormMasterLoader("Iphone5");
 			product = productMapper.get(product.getId());
-			System.out.println(product);
-			Assert.isTrue(product != null);
-			product = productMapper.getByName("` ' \"\t \n \r and or & | ");
+			product = productMapper.testFormMasterLoader("` ' \"\t \n \r and or & | ");
 			Assert.isNull(product);
 			System.out.println("\tget use time:" + (System.currentTimeMillis() - start));
 		}
@@ -58,7 +56,7 @@ public class RWDatabaseTest {
 		for (int i = 0; i < 1000; i++) {
 			long start = System.currentTimeMillis();
 			// 注意查询走的是Slave
-			Product product = productMapper.getByName("Mac book");
+			Product product = productMapper.testFormMasterLoader("Mac book");
 			Assert.isTrue(product != null);
 			// 删除走的是Master
 			int res = productMapper.delete(0);
@@ -70,7 +68,7 @@ public class RWDatabaseTest {
 
 	@Test
 	public void test_rw() {
-		Product product = productMapper.getByName("from_trader_r");
+		Product product = productMapper.testFormMasterLoader("from_trader_r");
 		if (ProductMapper.class.getAnnotation(DataSourceRouting.class).isReadWriteSplitting()) {
 			Assert.notNull(product);
 		} else {

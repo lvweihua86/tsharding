@@ -1,12 +1,8 @@
 package com.mogujie.service.tsharding.test;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.mogujie.route.rule.BaseRouteRule;
+import com.mogujie.route.rule.CRC32RouteRule;
+import com.mogujie.route.rule.MyRule;
+import com.mogujie.route.rule.ShardingUtils;
 import com.mogujie.service.tsharding.bean.ShopOrder;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.dao.ShopOrderDao;
@@ -168,4 +168,13 @@ public class OtherTest {
 		shopOrderDao.testShardingNumList(1, list);
 	}
 
+	public static void main(String[] args) {
+		Type type = ShardingUtils.getGenericityType(new CRC32RouteRule());
+		System.out.println(type);
+		type = ShardingUtils.getGenericityType(new MyRule());
+		System.out.println(type);
+		
+		type = ShardingUtils.getGenericityType(new BaseRouteRule<>());
+		System.out.println(type);
+	}
 }

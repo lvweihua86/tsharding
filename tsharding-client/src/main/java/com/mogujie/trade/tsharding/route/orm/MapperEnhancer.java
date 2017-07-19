@@ -100,7 +100,7 @@ public abstract class MapperEnhancer {
 			Entity entity = EnhanceMapperMethodUtils.segmentation(tables);
 			while (entity.hasSegemation()) {
 				MethodSegemation methodSegemation = entity.nextSegemation();
-				String shardingClass = EnhanceMapperMethodUtils.markShardingClass(mapperClassName, ctMethod.getName(),
+				String shardingClass = EnhanceMapperMethodUtils.getShardingClass(mapperClassName, ctMethod.getName(),
 						methodSegemation);
 				enhanceClass(shardingClass, originClass, originMethods, ctMethod, methodSegemation);
 			}
@@ -232,7 +232,7 @@ public abstract class MapperEnhancer {
 					// 获取新的sharding后的sql
 					SqlSource sqlSource = (SqlSource) method.invoke(this, ms, configuration, i);
 					String tableSuffix = RouteRuleFactory.getRouteRule(getMapperClass(ms.getId())).fillBit(i);
-					String newMsId = EnhanceMapperMethodUtils.markMappedStatement(ms.getId(), tableSuffix, routing.tables());
+					String newMsId = EnhanceMapperMethodUtils.getMappedStatement(ms.getId(), tableSuffix, routing.tables());
 					if (i == 0) {
 						builder.append(newMsId);
 					} else if (i == routing.tables() - 1) {

@@ -1,7 +1,5 @@
 package com.mogujie.route.rule;
 
-import java.util.zip.CRC32;
-
 import com.mogujie.trade.db.DataSourceRouting;
 /**
  * <b>根据CRC32算法实现路由</b>
@@ -17,11 +15,6 @@ import com.mogujie.trade.db.DataSourceRouting;
  * @author SHOUSHEN LUAN
  */
 public class CRC32RouteRule extends AbstractRouteRule<String> implements RouteRule<String> {
-	protected long calcCRC32(String value) {
-		CRC32 crc32 = new CRC32();
-		crc32.update(String.valueOf(value).getBytes());
-		return crc32.getValue();
-	}
 
 	protected String calcSchemaNameSuffix(DataSourceRouting routing, String shardingVal) {
 		return String.valueOf(getDataSourceSuffix(routing, shardingVal));

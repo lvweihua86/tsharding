@@ -82,7 +82,7 @@ public class ShopOrderDaoImpl implements ShopOrderDao {
 		// 插入订单(订单表进行了分库分表)
 		shopOrderMapper.insertOrder(order);
 		// 获取商品
-		Product product = productMapper.getByName("Mac book");
+		Product product = productMapper.testFormMasterLoader("Mac book");
 		// 删除商品
 		productMapper.delete(product.getId());
 		// TODO 现实中会根据自身业务逻辑决定是提交还是回退
@@ -101,7 +101,7 @@ public class ShopOrderDaoImpl implements ShopOrderDao {
 		// 插入订单(订单表进行了分库分表)
 		shopOrderMapper.insertOrder(order);
 		// 获取商品
-		Product product = productMapper.getByName("Mac book");
+		Product product = productMapper.testFormMasterLoader("Mac book");
 		// 删除商品
 		productMapper.delete(product.getId());
 		System.out.println("删除Product.id:" + product.getId() + " 稍后会回滚");
@@ -123,7 +123,7 @@ public class ShopOrderDaoImpl implements ShopOrderDao {
 			System.out.println("updateOrder:" + shopOrderMapper.update(updateOrder));
 		}
 		// 获取商品
-		Product product = productMapper.getByName("Mac book");
+		Product product = productMapper.testFormMasterLoader("Mac book");
 		// 删除商品
 		productMapper.delete(product.getId());
 		System.out.println("删除Product.id:" + product.getId());

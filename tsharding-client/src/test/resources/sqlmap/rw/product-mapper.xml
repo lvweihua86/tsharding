@@ -25,7 +25,7 @@
 	<delete id="delete" parameterType="int">
 		DELETE FROM product WHERE id=#{id}
 	</delete>
-	<select id="getByName" parameterType="String" resultType="com.mogujie.service.tsharding.bean.Product">
+	<select id="testFormMasterLoader" parameterType="String" resultType="com.mogujie.service.tsharding.bean.Product">
 		SELECT * FROM product WHERE name=#{name} limit 1
 	</select>
 </mapper>
