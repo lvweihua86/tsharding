@@ -73,8 +73,9 @@ public class CRC32RouteRuleOpenOrderInfo extends AbstractRouteRule<String> imple
 			long crc32Val = calcCRC32(shardingVal);
 			long res = crc32Val % routing.tables();
 			return (int) res;
+		}else{
+			return 0;
 		}
-		throw new IllegalArgumentException("注解实例的分表数量必须大于1");
 	}
 
 }

@@ -85,8 +85,9 @@ public class SimpleRouteRule extends AbstractRouteRule<Long> implements RouteRul
 		if (routing.tables() > 1) {
 			long val = shardingVal % routing.tables();
 			return (int) val;
+		}else{
+			return 0;
 		}
-		throw new IllegalArgumentException("注解实例的分表数量必须大于1");
 	}
 
 	public String fillDataSourceBit(long shardingDataSourceSuffix) {
