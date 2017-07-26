@@ -36,6 +36,7 @@ import javassist.bytecode.ConstPool;
 
 /**
  * 通用Mapper增强基类，扩展Mapper sql时需要继承该类
+ * 
  * @author qigong on 5/1/15
  */
 public abstract class MapperEnhancer {
@@ -50,6 +51,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 代码增加方法标记
+	 * 
 	 * @param record
 	 */
 	public String enhancedShardingSQL(Object record) {
@@ -82,6 +84,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 对mapper进行增强，生成新的mapper，并主动加载新mapper类到classloader
+	 * 
 	 * @param mapperClassName
 	 */
 	public static void enhanceMapperClass(String mapperClassName) throws Exception {
@@ -92,6 +95,7 @@ public abstract class MapperEnhancer {
 		CtClass cc = pool.get(mapperClassName);
 		DataSourceRouting routing = originClass.getAnnotation(DataSourceRouting.class);
 		int tables = routing.tables();
+		boolean isSplitTable = tables > 1;
 		TShardingLog.warn("增强接口:{} - [0,{}]", mapperClassName, tables - 1);
 		String methodName[] = new String[cc.getDeclaredMethods().length];
 		for (int m = 0; m < cc.getDeclaredMethods().length; m++) {
@@ -102,7 +106,7 @@ public abstract class MapperEnhancer {
 				MethodSegemation methodSegemation = entity.nextSegemation();
 				String shardingClass = EnhanceMapperMethodUtils.getShardingClass(mapperClassName, ctMethod.getName(),
 						methodSegemation);
-				enhanceClass(shardingClass, originClass, originMethods, ctMethod, methodSegemation);
+				enhanceClass(shardingClass, originClass, originMethods, ctMethod, methodSegemation,isSplitTable);
 			}
 		}
 		TShardingLog.warn("Methods:{}", Arrays.toString(methodName));
@@ -110,19 +114,26 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 增加mapper class
+	 * 
 	 * @param mapperClassName
 	 * @param originClass
 	 * @param originMethods
 	 * @param ctMethod
 	 * @param tables
+	 * @param isSplitTable 是否分表
 	 * @throws NotFoundException
 	 * @throws CannotCompileException
 	 */
 	private static void enhanceClass(String mapperClassName, Class<?> originClass, Method[] originMethods,
-			CtMethod ctMethod, MethodSegemation segemation) throws NotFoundException, CannotCompileException {
+			CtMethod ctMethod, MethodSegemation segemation,boolean isSplitTable) throws NotFoundException, CannotCompileException {
 		CtClass enhanceClass = pool.makeInterface(mapperClassName);
 		for (long i = segemation.getStart(); i <= segemation.getEnd(); i++) {
-			String tableSuffix = RouteRuleFactory.getRouteRule(originClass).fillBit(i);
+			String tableSuffix;
+			if(isSplitTable){//计算分表后缀
+				tableSuffix = RouteRuleFactory.getRouteRule(originClass).fillBit(i);
+			}else{
+				tableSuffix = String.valueOf(i);
+			}
 			CtMethod newMethod = new CtMethod(ctMethod.getReturnType(), ctMethod.getName() + tableSuffix,
 					ctMethod.getParameterTypes(), enhanceClass);
 			Method method = getOriginMethod(newMethod, originMethods);
@@ -151,6 +162,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 验证方法名称是否为增强方法
+	 * 
 	 * @param routeMethod 路由方法
 	 * @param rawMethod 原始方法
 	 * @return
@@ -165,6 +177,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 添加映射方法
+	 * 
 	 * @param methodName
 	 * @param method
 	 */
@@ -177,8 +190,8 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 反射对象，增加对低版本Mybatis的支持
-	 * @param object
-	 *          反射对象
+	 * 
+	 * @param object 反射对象
 	 * @return
 	 */
 	public static MetaObject forObject(Object object) {
@@ -187,6 +200,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 是否支持该通用方法
+	 * 
 	 * @param msId
 	 * @return
 	 */
@@ -201,6 +215,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 重新设置SqlSource
+	 * 
 	 * @param ms
 	 * @param sqlSource
 	 */
@@ -211,6 +226,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 重新设置SqlSource
+	 * 
 	 * @param ms
 	 * @throws java.lang.reflect.InvocationTargetException
 	 * @throws IllegalAccessException
@@ -231,7 +247,12 @@ public abstract class MapperEnhancer {
 				for (long i = 0; i < routing.tables(); i++) {
 					// 获取新的sharding后的sql
 					SqlSource sqlSource = (SqlSource) method.invoke(this, ms, configuration, i);
-					String tableSuffix = RouteRuleFactory.getRouteRule(getMapperClass(ms.getId())).fillBit(i);
+					String tableSuffix;
+					if(routing.tables()>1){
+						tableSuffix = RouteRuleFactory.getRouteRule(getMapperClass(ms.getId())).fillBit(i);
+					}else{
+						tableSuffix=String.valueOf(i);
+					}
 					String newMsId = EnhanceMapperMethodUtils.getMappedStatement(ms.getId(), tableSuffix, routing.tables());
 					if (i == 0) {
 						builder.append(newMsId);
@@ -288,6 +309,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 根据msId获取接口类
+	 * 
 	 * @param msId
 	 * @return
 	 * @throws ClassNotFoundException
@@ -303,6 +325,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 获取执行的方法名
+	 * 
 	 * @param ms
 	 * @return
 	 */
@@ -312,6 +335,7 @@ public abstract class MapperEnhancer {
 
 	/**
 	 * 获取执行的方法名
+	 * 
 	 * @param msId
 	 * @return
 	 */
