@@ -14,7 +14,7 @@ import com.mogujie.tsharding.filter.MapperHandlerInterceptor;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(EnableConfigRegistrar.class)
+@Import(EnableConfigRegistry.class)
 public @interface EnableTSharding {
 	/**
 	 * 配置Mappper包路径

@@ -24,10 +24,10 @@ import com.mogujie.trade.tsharding.route.orm.MapperShardingInitializer;
 import com.mogujie.tsharding.filter.HandlerInterceptorAdapterFactory;
 import com.mogujie.tsharding.filter.MapperHandlerInterceptor;
 
-class EnableConfigRegistrar
+class EnableConfigRegistry
 		implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
 
-	public EnableConfigRegistrar() {
+	public EnableConfigRegistry() {
 	}
 
 	@Override
