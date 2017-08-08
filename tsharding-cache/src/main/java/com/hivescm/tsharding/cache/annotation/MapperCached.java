@@ -7,10 +7,11 @@ import java.lang.annotation.Target;
 
 /**
  * Tsharding 缓存注解(只对Mapper接口方法上使用生效)
- * 
+ * 已过时的Mapper cache注解，建议使用 {@linkplain @Cached}
  * @author SHOUSHEN LUAN
  *
  */
+@Deprecated
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MapperCached {

@@ -19,7 +19,8 @@ import com.mogujie.tsharding.filter.MapperHandlerInterceptor;
 public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 	@Autowired
 	private JedisClient<Object> jedisClient;
-
+	@Autowired
+	private ProxyCacheHandler proxyCacheHandler;
 	@Override
 	public Object invoker(InvocationProxy invocation) throws Throwable {
 		MapperHander mapperHander = MapperUtils.getMapperHander(invocation);
@@ -32,7 +33,7 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 				clearCache(mapperHander);
 			}
 		} else {
-			return this.doInvoker(invocation, mapperHander);
+			return proxyCacheHandler.invoke(invocation,this);
 		}
 	}
 
@@ -44,7 +45,7 @@ public class CacheMapperHandlerInterceptor implements MapperHandlerInterceptor {
 	 * @return
 	 * @throws Throwable
 	 */
-	private Object doInvoker(InvocationProxy invocation, MapperHander mapperHander) throws Throwable {
+	public Object doInvoker(InvocationProxy invocation, MapperHander mapperHander) throws Throwable {
 		long start = System.currentTimeMillis();
 		try {
 			return invocation.doInvoker();

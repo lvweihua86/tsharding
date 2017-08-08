@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.hivescm.cache.utils.CacheConfig;
 import com.hivescm.common.conf.SystemManager;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.mapper.UserInfoMapper;
@@ -22,25 +23,36 @@ public class OneDatabaseTest {
 	@Autowired
 	private UserInfoMapper userInfoMapper;
 	static {
+		CacheConfig.slow_times = 0;
 		SystemManager.project_Name = "tsharding-cache";
 	}
 
 	@Test
 	public void insert() {
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 1000; i++) {
+			System.out.println("======================" + i);
 			long start = System.currentTimeMillis();
-			System.out.println(userInfoMapper.getByName("kevin-Luan"));
-			System.out.println(userInfoMapper.getByName("kevin-Luan"));
-			System.out.println(userInfoMapper.getByName("kevin+Luan"));
-			System.out.println(userInfoMapper.getByName("kevin+Luan"));
+			userInfoMapper.getByName("张三");
+			userInfoMapper.getByName("李四");
+			userInfoMapper.getByName("张三");
+			userInfoMapper.getByName("李四");
 			UserInfo userInfo = new UserInfo();
-			userInfo.setName("kevin-Luan");
+			userInfo.setName("张三");
 			userInfo.setAge(10);
 			userInfo.setSex(1);
-			userInfo.setNickName("kevin+Luan");
+			userInfo.setNickName("李四");
 			int res = userInfoMapper.insert(userInfo);
 			Assert.assertTrue(res == 1);
 			System.out.println("\tinsert use time:" + (System.currentTimeMillis() - start));
+		}
+	}
+
+	@Test
+	public void test_many_annotation() {
+		for (int i = 0; i < 1000; i++) {
+			System.out.println("------------------------" + i);
+			userInfoMapper.get(0);
+			System.out.println();
 		}
 	}
 
