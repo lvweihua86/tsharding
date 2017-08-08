@@ -2,6 +2,7 @@ package com.hivescm.tsharding.cache;
 
 import java.lang.reflect.Method;
 
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class ProxyCacheHandler {
 	}
 
 	public Object invoke(InvocationProxy invocationProxy, CacheMapperHandlerInterceptor interceptor) throws Throwable {
-		MethodInvocationProceedingJoinPoint pjp = make(invocationProxy, interceptor);
+		ProceedingJoinPoint pjp = createProceedingJoinPoint(invocationProxy, interceptor);
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
 		try {
 			if (hasCacheEvicted(method)) {
@@ -53,7 +54,7 @@ public class ProxyCacheHandler {
 		}
 	}
 
-	private ProxyCacheMethodInvocation buildMethodInvocation(InvocationProxy invocationProxy,
+	private ProceedingJoinPoint createProceedingJoinPoint(InvocationProxy invocationProxy,
 			CacheMapperHandlerInterceptor interceptor) {
 		Invocation invocation = invocationProxy.getInvocation();
 		Method method;
@@ -66,12 +67,8 @@ public class ProxyCacheHandler {
 			targetClass = invocation.getMapperClass();
 		}
 		Object[] arguments = invocation.getArgs();
-		return new ProxyCacheMethodInvocation(invocationProxy, method, arguments, targetClass, interceptor);
+		ProxyCacheMethodInvocation pcmi = new ProxyCacheMethodInvocation(invocationProxy, method, arguments, targetClass,
+				interceptor);
+		return new MethodInvocationProceedingJoinPoint(pcmi);
 	}
-
-	private MethodInvocationProceedingJoinPoint make(InvocationProxy invocationProxy,
-			CacheMapperHandlerInterceptor interceptor) {
-		return new MethodInvocationProceedingJoinPoint(buildMethodInvocation(invocationProxy, interceptor));
-	}
-
 }
