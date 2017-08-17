@@ -1,7 +1,6 @@
 package com.mogujie.distributed.transction;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -62,7 +61,7 @@ public class DynamicTransctionManager {
 		}
 		RouteRule<Object> routeRule = RouteRuleFactory.getRouteRule(mapper);
 		DataSourceRouting routing = mapper.getAnnotation(DataSourceRouting.class);
-		if (routing.tables() > 1 && routing.databases() > 1) {
+		if (routing.tables() > 1 || routing.databases() > 1) {
 			for (Object param : shardingParams) {
 				addTransManager(routeRule, routing, param);
 			}
@@ -78,7 +77,7 @@ public class DynamicTransctionManager {
 		}
 		RouteRule<Object> routeRule = RouteRuleFactory.getRouteRule(mapper);
 		DataSourceRouting routing = mapper.getAnnotation(DataSourceRouting.class);
-		if (routing.tables() > 1 && routing.databases() > 1) {
+		if (routing.tables() > 1 || routing.databases() > 1) {
 			for (Object param : params) {
 				addTransManager(routeRule, routing, param);
 			}
@@ -90,7 +89,7 @@ public class DynamicTransctionManager {
 
 	private boolean addTransManager(RouteRule<Object> routeRule, DataSourceRouting routing, Object shardingParam) {
 		String dataSource;
-		if (routing.tables() > 1 && routing.databases() > 1) {
+		if (routing.tables() > 1 || routing.databases() > 1) {
 			dataSource = routeRule.calculateSchemaName(routing, shardingParam);
 		} else {
 			dataSource = routing.dataSource();
