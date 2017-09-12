@@ -1,6 +1,7 @@
 package com.mogujie.route.rule;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.mogujie.trade.db.DataSourceRouting;
@@ -27,8 +28,7 @@ public class RouteRuleFactory {
 		if (dataRouteMap.containsKey(mappedClass)) {
 			return dataRouteMap.get(mappedClass);
 		} else {
-			throw new IllegalArgumentException(
-					"Not found mapper route rule by mapperClass:`" + mappedClass.getName() + "`");
+			throw new IllegalArgumentException("Not found mapper route rule by mapperClass:`" + mappedClass.getName() + "`");
 		}
 	}
 
@@ -67,5 +67,14 @@ public class RouteRuleFactory {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 获取所有增强Mapper类
+	 * 
+	 * @return
+	 */
+	public static Set<Class<?>> getEnhancedMappers() {
+		return dataRouteMap.keySet();
 	}
 }
