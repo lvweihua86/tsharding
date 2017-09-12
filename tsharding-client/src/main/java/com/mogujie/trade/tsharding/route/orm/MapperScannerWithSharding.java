@@ -27,6 +27,7 @@ import com.mogujie.route.rule.RouteRuleFactory;
 import com.mogujie.sharding.merge.MergeApi;
 import com.mogujie.sharding.merge.MergeFactory;
 import com.mogujie.trade.db.DataSourceLookup;
+import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.db.ReadWriteSplittingDataSource;
 import com.mogujie.trade.hander.MapperFactory;
 import com.mogujie.trade.hander.MapperFactory.ShardingHanderEntry;
@@ -39,7 +40,9 @@ import com.mogujie.trade.utils.GroupDBTable;
 import com.mogujie.trade.utils.TShardingLog;
 
 /**
- * Tsharding MybatisMapper的扫描类，负责将Mapper接口与对应的xml配置文件整合，绑定设定的数据源，注入到Spring Context中。
+ * Tsharding MybatisMapper的扫描类，负责将Mapper接口与对应的xml配置文件整合，绑定设定的数据源，注入到Spring
+ * Context中。
+ * 
  * @author qigong
  */
 public class MapperScannerWithSharding implements BeanFactoryPostProcessor, InitializingBean {
@@ -139,7 +142,7 @@ public class MapperScannerWithSharding implements BeanFactoryPostProcessor, Init
 		this.sqlSessionFactoryLookup = new SqlSessionFactoryLookup(sqlSessionFactories);
 	}
 
-	private boolean isMapper(Class<?> clazz) {
+	private static boolean isMapper(Class<?> clazz) {
 		if (clazz.isInterface()) {
 			return true;
 		}
@@ -181,6 +184,7 @@ public class MapperScannerWithSharding implements BeanFactoryPostProcessor, Init
 
 	/**
 	 * 注入packageName配置
+	 * 
 	 * @param packageName
 	 */
 	public void setPackageName(String packageName) {
@@ -189,6 +193,7 @@ public class MapperScannerWithSharding implements BeanFactoryPostProcessor, Init
 
 	/**
 	 * 注入mapperLocations配置
+	 * 
 	 * @param mapperLocations
 	 */
 	public void setMapperLocations(Resource[] mapperLocations) {
@@ -201,5 +206,26 @@ public class MapperScannerWithSharding implements BeanFactoryPostProcessor, Init
 
 	public void setConfigLocation(Resource configLocation) {
 		this.configLocation = configLocation;
+	}
+	/**
+	 * 扫描Mapper类
+	 * @param mapperPacakage
+	 * @return
+	 */
+	public static Set<Class<?>> scanMapper(String... mapperPackage) {
+		ClassPathScanHandler scanner = new ClassPathScanHandler();
+		Set<Class<?>> mapperClasses = new HashSet<>();
+		for (String pack : mapperPackage) {
+			Set<Class<?>> classes = scanner.getPackageAllClasses(pack.trim(), false);
+			mapperClasses.addAll(classes);
+		}
+		for (Class<?> clazz : mapperClasses) {
+			if (isMapper(clazz)) {
+				if(clazz.getAnnotation(DataSourceRouting.class)!=null){
+					mapperClasses.add(clazz);	
+				}
+			}
+		}
+		return mapperClasses;
 	}
 }

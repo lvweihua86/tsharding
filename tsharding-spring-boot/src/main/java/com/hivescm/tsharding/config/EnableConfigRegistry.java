@@ -1,6 +1,7 @@
 package com.hivescm.tsharding.config;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -13,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 
+import com.hivescm.tsharding.utils.ClassNameHelper;
 import com.mogujie.distributed.transction.ChainedTransactionInteceptor;
 import com.mogujie.distributed.transction.DynamicTransctionManagerFactory;
 import com.mogujie.trade.db.DataSourceScanner;
@@ -33,8 +35,8 @@ class EnableConfigRegistry
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
 		Map<String, Object> defaultAttrs = metadata.getAnnotationAttributes(EnableTSharding.class.getName(), true);
-		registerMapper(defaultAttrs, registry);
-		registerEnhancedMappers(defaultAttrs, registry);
+		Set<Class<?>> mappers = registerMapper(defaultAttrs, registry);
+		registerEnhancedMappers(defaultAttrs, registry, mappers);
 		registerDataSourceFactory(registry, defaultAttrs);
 		registerDataSourceScanner(registry);
 		registerReadWriteSplittingAdvice(registry);
@@ -104,28 +106,20 @@ class EnableConfigRegistry
 	 * @param defaultAttrs
 	 * @param registry
 	 */
-	private void registerMapper(Map<String, Object> defaultAttrs, BeanDefinitionRegistry registry) {
+	private Set<Class<?>> registerMapper(Map<String, Object> defaultAttrs, BeanDefinitionRegistry registry) {
 		String[] mapperPackage = (String[]) defaultAttrs.get("mapperPackage");
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
 				.genericBeanDefinition(MapperScannerWithSharding.class);
-		definitionBuilder.addPropertyValue("packageName", toString(mapperPackage));
+		String value = ClassNameHelper.build(mapperPackage);
+		definitionBuilder.addPropertyValue("packageName", value);
 		definitionBuilder.addPropertyValue("mapperLocations", defaultAttrs.get("mapperLocations"));
 		String myBatisConfig = (String) defaultAttrs.get("configLocation");
 		if (StringUtils.isNoneBlank(myBatisConfig)) {
 			definitionBuilder.addPropertyValue("configLocation", defaultAttrs.get("configLocation"));
 		}
 		registry.registerBeanDefinition("MapperScannerWithSharding", definitionBuilder.getBeanDefinition());
-	}
-
-	private static String toString(String[] strs) {
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < strs.length; i++) {
-			builder.append(strs[i]);
-			if (strs.length > i + 1) {
-				builder.append(",");
-			}
-		}
-		return builder.toString();
+		Set<Class<?>> mappers = MapperScannerWithSharding.scanMapper(mapperPackage);
+		return mappers;
 	}
 
 	/**
@@ -134,12 +128,16 @@ class EnableConfigRegistry
 	 * @param defaultAttrs
 	 * @param registry
 	 */
-	private void registerEnhancedMappers(Map<String, Object> defaultAttrs, BeanDefinitionRegistry registry) {
+	private void registerEnhancedMappers(Map<String, Object> defaultAttrs, BeanDefinitionRegistry registry,
+			Set<Class<?>> mappers) {
 		String[] enhancedMappers = (String[]) defaultAttrs.get("enhancedMappers");
-		if (enhancedMappers != null && enhancedMappers.length > 0) {
+		String value = ClassNameHelper.build(enhancedMappers, mappers);
+		System.out.println("注册增强Mapper:" + value);
+		if (StringUtils.isNotBlank(value)) {
 			BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
 					.genericBeanDefinition(MapperShardingInitializer.class);
-			definitionBuilder.addPropertyValue("needEnhancedClasses", toString(enhancedMappers));
+
+			definitionBuilder.addPropertyValue("needEnhancedClasses", value);
 			registry.registerBeanDefinition("MapperShardingInitializer", definitionBuilder.getBeanDefinition());
 		}
 	}
