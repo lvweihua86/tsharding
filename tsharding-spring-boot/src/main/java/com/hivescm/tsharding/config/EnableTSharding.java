@@ -25,9 +25,13 @@ public @interface EnableTSharding {
 
 	/**
 	 * 配置分库分表的Mapper Class 定义增强Mapper
+	 * <p>
+	 * 增加自动发现功能,根据：this.mapperPackage()配置的包路径下的Mapper注解自动发现是分库或分表Mapper进行增强处理
+	 * </p>
 	 * 
 	 * @return
 	 */
+	@Deprecated
 	public Class<?>[] enhancedMappers() default {};
 
 	/**
