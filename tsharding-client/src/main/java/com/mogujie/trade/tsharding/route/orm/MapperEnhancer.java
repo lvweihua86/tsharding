@@ -21,9 +21,9 @@ import org.apache.ibatis.session.Configuration;
 import com.mogujie.route.rule.RouteRuleFactory;
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.utils.EnhanceMapperMethodUtils;
-import com.mogujie.trade.utils.TShardingLog;
 import com.mogujie.trade.utils.EnhanceMapperMethodUtils.Entity;
 import com.mogujie.trade.utils.EnhanceMapperMethodUtils.MethodSegemation;
+import com.mogujie.trade.utils.TShardingLog;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -66,7 +66,7 @@ public abstract class MapperEnhancer {
 
 	private static void init() {
 		if (isInit.compareAndSet(false, true)) {
-			pool.insertClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
+			pool.insertClassPath(new LoaderClassPath(getClassLoader()));
 			// 下面方式也可以达到同样效果
 			// Set<String> set = ScanClass.getAppClassPath();
 			// Iterator<String> iterator = set.iterator();
@@ -80,6 +80,15 @@ public abstract class MapperEnhancer {
 			// }
 			// }
 		}
+	}
+
+	private static ClassLoader classLoader;
+
+	public static ClassLoader getClassLoader() {
+		if (classLoader == null) {
+			classLoader = Thread.currentThread().getContextClassLoader();
+		}
+		return classLoader;
 	}
 
 	/**
@@ -106,7 +115,7 @@ public abstract class MapperEnhancer {
 				MethodSegemation methodSegemation = entity.nextSegemation();
 				String shardingClass = EnhanceMapperMethodUtils.getShardingClass(mapperClassName, ctMethod.getName(),
 						methodSegemation);
-				enhanceClass(shardingClass, originClass, originMethods, ctMethod, methodSegemation,isSplitTable);
+				enhanceClass(shardingClass, originClass, originMethods, ctMethod, methodSegemation, isSplitTable);
 			}
 		}
 		TShardingLog.warn("Methods:{}", Arrays.toString(methodName));
@@ -125,13 +134,14 @@ public abstract class MapperEnhancer {
 	 * @throws CannotCompileException
 	 */
 	private static void enhanceClass(String mapperClassName, Class<?> originClass, Method[] originMethods,
-			CtMethod ctMethod, MethodSegemation segemation,boolean isSplitTable) throws NotFoundException, CannotCompileException {
+			CtMethod ctMethod, MethodSegemation segemation, boolean isSplitTable)
+			throws NotFoundException, CannotCompileException {
 		CtClass enhanceClass = pool.makeInterface(mapperClassName);
 		for (long i = segemation.getStart(); i <= segemation.getEnd(); i++) {
 			String tableSuffix;
-			if(isSplitTable){//计算分表后缀
+			if (isSplitTable) {// 计算分表后缀
 				tableSuffix = RouteRuleFactory.getRouteRule(originClass).fillBit(i);
-			}else{
+			} else {
 				tableSuffix = String.valueOf(i);
 			}
 			CtMethod newMethod = new CtMethod(ctMethod.getReturnType(), ctMethod.getName() + tableSuffix,
@@ -248,10 +258,10 @@ public abstract class MapperEnhancer {
 					// 获取新的sharding后的sql
 					SqlSource sqlSource = (SqlSource) method.invoke(this, ms, configuration, i);
 					String tableSuffix;
-					if(routing.tables()>1){
+					if (routing.tables() > 1) {
 						tableSuffix = RouteRuleFactory.getRouteRule(getMapperClass(ms.getId())).fillBit(i);
-					}else{
-						tableSuffix=String.valueOf(i);
+					} else {
+						tableSuffix = String.valueOf(i);
 					}
 					String newMsId = EnhanceMapperMethodUtils.getMappedStatement(ms.getId(), tableSuffix, routing.tables());
 					if (i == 0) {

@@ -1,3 +1,4 @@
+.idea/
 tsharding-client/.classpath
 tsharding-client/.project
 tsharding-client/.settings/
@@ -24,3 +25,4 @@ tsharding-spring-boot/.idea/
 tsharding-spring-boot/.project
 tsharding-spring-boot/.settings/
 tsharding-spring-boot/target/
+tsharding-cache/target/
