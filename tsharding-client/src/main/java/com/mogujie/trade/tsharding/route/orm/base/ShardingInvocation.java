@@ -155,11 +155,7 @@ class ShardingInvocation implements Invocation {
 		int segemation = rule.getSegemation(shardingHander.getRouting(), routeParam);
 		String shardingMapper = EnhanceMapperMethodUtils.getShardingClass(mapperClassName, rawMethod.getName(), segemation);
 		// 增强后的接口
-		try {
-			return Class.forName(shardingMapper);
-		} catch (Exception e) {
-			return Class.forName(shardingMapper, true, MapperEnhancer.getClassLoader());
-		}
+		return Class.forName(shardingMapper, true, MapperEnhancer.getClassLoader());
 	}
 
 	@Override
