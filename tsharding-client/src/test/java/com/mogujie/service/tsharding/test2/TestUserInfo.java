@@ -8,6 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.CannotCreateTransactionException;
 
+import com.mogujie.distributed.transction.DynamicTransctionManagerFactory;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.dao.UserInfoService;
 import com.mogujie.service.tsharding.dao.UserInfoService2;
@@ -22,6 +23,8 @@ public class TestUserInfo {
 	UserInfoService2 userInfoService2;
 	@Autowired
 	private UserInfoMapper userInfoMapper;
+	@Autowired
+	private DynamicTransctionManagerFactory dtmFactory;
 
 	@Test
 	public void test_a() {
@@ -80,5 +83,10 @@ public class TestUserInfo {
 			UserInfo userInfo = userInfoMapper.getByName(name);
 			Assert.assertNull(userInfo);
 		}
+	}
+
+	@Test
+	public void test_e() {
+		Assert.assertTrue(userInfoService.useTransactionApi());
 	}
 }
