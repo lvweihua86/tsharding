@@ -18,13 +18,16 @@ public class TransactionManagerUtils {
 	 * 
 	 * @return
 	 */
-	public static DefaultTransactionDefinition getDefaultTransactionDefinition() {
+	private static DefaultTransactionDefinition getDefaultTransactionDefinition(int timeout) {
 		DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
 		// 定义如隔离级别、传播行为等，即在本示例中隔离级别为ISOLATION_READ_COMMITTED（提交读），
 		definition.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 		// 传播行为为
 		// PROPAGATION_REQUIRED（必须有事务支持，即如果当前没有事务，就新建一个事务，如果已经存在一个事务中，就加入到这个事务中）。
 		definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		if (timeout > 0) {
+			definition.setTimeout(timeout);
+		}
 		return definition;
 	}
 
@@ -45,8 +48,15 @@ public class TransactionManagerUtils {
 	 * @param tm
 	 * @return
 	 */
+	public static TransactionProxy createTransaction(PlatformTransactionManager tm, int timeout) {
+		DefaultTransactionDefinition definition = getDefaultTransactionDefinition(timeout);
+		// 事务状态类，通过PlatformTransactionManager的getTransaction方法根据事务定义获取；获取事务状态后，Spring根据传播行为来决定如何开启事务；
+		TransactionStatus status = tm.getTransaction(definition);
+		return new TransactionProxy(tm, status);
+	}
+
 	public static TransactionProxy createTransaction(PlatformTransactionManager tm) {
-		DefaultTransactionDefinition definition = getDefaultTransactionDefinition();
+		DefaultTransactionDefinition definition = getDefaultTransactionDefinition(-1);
 		// 事务状态类，通过PlatformTransactionManager的getTransaction方法根据事务定义获取；获取事务状态后，Spring根据传播行为来决定如何开启事务；
 		TransactionStatus status = tm.getTransaction(definition);
 		return new TransactionProxy(tm, status);

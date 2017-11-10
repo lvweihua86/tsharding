@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.transaction.ChainedTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.interceptor.TransactionAttribute;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.mogujie.route.rule.RouteRule;
 import com.mogujie.route.rule.RouteRuleFactory;
@@ -36,7 +37,14 @@ public class DynamicTransctionManager {
 	 * 生成事物管理器
 	 */
 	public TransactionProxy build() {
-		return this.build(null);
+		return TransactionManagerUtils.createTransaction(createChainedTransactionManager(), -1);
+	}
+
+	/**
+	 * 生成事物管理器
+	 */
+	public TransactionProxy build(int timeout) {
+		return TransactionManagerUtils.createTransaction(createChainedTransactionManager(), timeout);
 	}
 
 	/**
