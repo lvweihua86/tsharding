@@ -19,7 +19,6 @@ import com.mogujie.trade.utils.TransactionResult;
  * 链式事物管理拦截器
  * 
  * @author SHOUSHEN LUAN
- *
  */
 @Aspect
 @Component
@@ -41,16 +40,15 @@ public class ChainedTransactionInteceptor implements Interceptor {
 			if (routing.databases() > 1) {
 				List<Object> params = FieldUtils.parserParam(mapper, entity, pjp.getArgs());
 				if (params == null || params.size() == 0) {
-					throw new IllegalArgumentException(
-							"mapper:`" + mapper + "` ShardingParam must not empty. use @DataSourceRouting("
-									+ mapper.getSimpleName() + "...)");
+					throw new IllegalArgumentException("mapper:`" + mapper
+							+ "` ShardingParam must not empty. use @DataSourceRouting(" + mapper.getSimpleName() + "...)");
 				}
 				transctionManager.addTransManager(mapper, params);
 			} else {
 				transctionManager.addTransManager(mapper);
 			}
 		}
-		TransactionProxy transactionProxy = transctionManager.build(entity.getTimeout());
+		TransactionProxy transactionProxy = transctionManager.build(entity.getTransactionAttribute());
 		Throwable throwable = null;
 		Object result = null;
 		try {

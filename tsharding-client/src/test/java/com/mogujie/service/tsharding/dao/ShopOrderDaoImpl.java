@@ -1,16 +1,15 @@
 package com.mogujie.service.tsharding.dao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.RollbackException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mogujie.distributed.transction.ChainedTransaction;
@@ -22,7 +21,6 @@ import com.mogujie.service.tsharding.bean.Product;
 import com.mogujie.service.tsharding.bean.ShopOrder;
 import com.mogujie.service.tsharding.mapper.ProductMapper;
 import com.mogujie.service.tsharding.mapper.ShopOrderMapper;
-import com.mogujie.trade.utils.TransactionResult;
 import com.mogujie.trade.utils.TransactionManagerUtils.TransactionProxy;
 
 /**
@@ -65,6 +63,9 @@ public class ShopOrderDaoImpl implements ShopOrderDao {
 	@Transactional(value = "tradeTransactionManager", rollbackFor = IllegalArgumentException.class, noRollbackFor = RuntimeException.class)
 	public boolean insert(ShopOrder order) {
 		int result = shopOrderMapper.insertOrder(order);
+//		if(result>0){
+//			throw new IllegalArgumentException("rollback");
+//		}
 		return result >= 0;
 	}
 
@@ -78,7 +79,7 @@ public class ShopOrderDaoImpl implements ShopOrderDao {
 		TransactionProxy transactionProxy = dtmFactory.create()//
 				.addTransManager(ProductMapper.class)//
 				.addTransManager(ShopOrderMapper.class, order.getOrderId())//
-				.build(2);
+				.build();
 		// 插入订单(订单表进行了分库分表)
 		shopOrderMapper.insertOrder(order);
 		// 获取商品

@@ -3,6 +3,7 @@ package com.mogujie.trade.utils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.interceptor.TransactionAttribute;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
@@ -33,8 +34,9 @@ public class TransactionManagerUtils {
 	 * @param tm
 	 * @return
 	 */
-	public static TransactionProxy createTransaction(PlatformTransactionManager tm) {
-		return createTransaction(tm, -1);
+	public static TransactionProxy createTransaction(PlatformTransactionManager tm, TransactionAttribute attribute) {
+		TransactionStatus status = tm.getTransaction(attribute);
+		return new TransactionProxy(tm, status);
 	}
 
 	/**
@@ -43,14 +45,11 @@ public class TransactionManagerUtils {
 	 * @param tm
 	 * @return
 	 */
-	public static TransactionProxy createTransaction(PlatformTransactionManager tm, int timeout) {
+	public static TransactionProxy createTransaction(PlatformTransactionManager tm) {
 		DefaultTransactionDefinition definition = getDefaultTransactionDefinition();
 		// 事务状态类，通过PlatformTransactionManager的getTransaction方法根据事务定义获取；获取事务状态后，Spring根据传播行为来决定如何开启事务；
-		TransactionStatus txStatus = tm.getTransaction(definition);
-		if (timeout > 0) {
-			definition.setTimeout(timeout);
-		}
-		return new TransactionProxy(tm, txStatus);
+		TransactionStatus status = tm.getTransaction(definition);
+		return new TransactionProxy(tm, status);
 	}
 
 	/**

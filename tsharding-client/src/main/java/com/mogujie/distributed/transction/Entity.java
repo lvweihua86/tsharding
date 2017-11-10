@@ -3,7 +3,6 @@ package com.mogujie.distributed.transction;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.interceptor.TransactionAttribute;
 
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.utils.TransactionResult;
@@ -22,10 +22,11 @@ class Entity {
 	private final String staticPart;
 	final Method method;
 	final ChainedTransaction transaction;
-	final Map<Class<?>, LinkedList<Integer>> mapper_paramIndex = new HashMap<>();
+	final Map<Class<?>, LinkedList<Integer>> mapper_paramIndex = new ConcurrentHashMap<>();
 	private Map<Class<?>, Boolean> shardingMappersFlag = new ConcurrentHashMap<>();
 	private Method unfinishedCallback;
 	private final Object target;
+	private final TransactionAttribute transactionAttribute;
 
 	public Entity(ProceedingJoinPoint pjp) {
 		this.target = pjp.getTarget();
@@ -34,6 +35,15 @@ class Entity {
 		this.transaction = method.getAnnotation(ChainedTransaction.class);
 		check();
 		parserUnfinishedCallback();
+		transactionAttribute = TransactionHelper.parseTransactionAttribute(transaction);
+	}
+
+	public TransactionAttribute getTransactionAttribute() {
+		return this.transactionAttribute;
+	}
+
+	public ChainedTransaction getChainedTransaction() {
+		return transaction;
 	}
 
 	public void doInvokeUnfinishedCallback(ProceedingJoinPoint pjp, TransactionResult res) {
@@ -116,11 +126,11 @@ class Entity {
 			if (AnyException.class.getName().equals(clazzs[i].getName())) {
 				return true;
 			}
-			if (clazzs[i].getName().equals(throwable.getClass().getName())) {
-				return true;
-			}
 		}
-		return false;
+		// if (clazzs[i].getName().equals(throwable.getClass().getName())) {
+		// return true;
+		// }
+		return getTransactionAttribute().rollbackOn(throwable);
 	}
 
 	public Class<?>[] getMapper() {
@@ -165,8 +175,7 @@ class Entity {
 	void assertFlag() {
 		for (Map.Entry<Class<?>, Boolean> entry : shardingMappersFlag.entrySet()) {
 			if (!entry.getValue()) {
-				throw new IllegalArgumentException(
-						staticPart + ".Mapper:`" + entry.getKey() + "` missing @RouteParam(...)");
+				throw new IllegalArgumentException(staticPart + ".Mapper:`" + entry.getKey() + "` missing @RouteParam(...)");
 			}
 		}
 	}

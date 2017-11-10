@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.transaction.ChainedTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.interceptor.TransactionAttribute;
 
 import com.mogujie.route.rule.RouteRule;
 import com.mogujie.route.rule.RouteRuleFactory;
@@ -20,7 +21,6 @@ import com.mogujie.trade.utils.TransactionManagerUtils.TransactionProxy;
  * 动态事物管理器
  * 
  * @author SHOUSHEN LUAN
- *
  */
 public class DynamicTransctionManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DynamicTransctionManager.class);
@@ -32,27 +32,23 @@ public class DynamicTransctionManager {
 		this.applicationContext = applicationContext;
 	}
 
+	/**
+	 * 生成事物管理器
+	 */
 	public TransactionProxy build() {
-		return build(-1);
+		return this.build(null);
 	}
 
 	/**
 	 * 生成事物管理器
-	 * 
-	 * @param timeout
-	 *            unit second
-	 * @return
 	 */
-	public TransactionProxy build(int timeout) {
-		return TransactionManagerUtils.createTransaction(createChainedTransactionManager(), timeout);
+	public TransactionProxy build(TransactionAttribute attribute) {
+		return TransactionManagerUtils.createTransaction(createChainedTransactionManager(), attribute);
 	}
 
 	/**
 	 * 添加事物管理器
 	 * 
-	 * @param routeRule
-	 * @param routing
-	 * @param shardingParam
 	 * @return
 	 */
 	public DynamicTransctionManager addTransManager(Class<?> mapper, Object... shardingParams) {
@@ -109,9 +105,6 @@ public class DynamicTransctionManager {
 	/**
 	 * 添加事物管理器
 	 * 
-	 * @param routeRule
-	 * @param routing
-	 * @param shardingParam
 	 * @return
 	 */
 	public DynamicTransctionManager addTransManager(Class<?> mapper) {
@@ -127,9 +120,9 @@ public class DynamicTransctionManager {
 
 	private ChainedTransactionManager createChainedTransactionManager() {
 		transactionManagers = new PlatformTransactionManager[transManagers.size()];
-		int index=0;
+		int index = 0;
 		for (int i = transManagers.size() - 1; i >= 0; i--) {
-			String name= transManagers.get(i);
+			String name = transManagers.get(i);
 			PlatformTransactionManager ptm = applicationContext.getBean(name, PlatformTransactionManager.class);
 			transactionManagers[index] = ptm;
 			index++;
@@ -139,4 +132,5 @@ public class DynamicTransctionManager {
 		}
 		return new ChainedTransactionManager(transactionManagers);
 	}
+
 }
