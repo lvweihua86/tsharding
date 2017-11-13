@@ -37,6 +37,8 @@ import com.mogujie.trade.utils.GroupTransactionManager.TmGroup;
 import com.mogujie.trade.utils.GroupTransactionManager.TmGroup.Entry;
 import com.mogujie.trade.utils.TShardingLog;
 
+import javassist.NotFoundException;
+
 /**
  * @author by jiuru on 16/7/14.
  */
@@ -49,15 +51,22 @@ public class DataSourceScanner implements BeanDefinitionRegistryPostProcessor, A
 	private DataSourceFactory<? extends DataSource> dataSourceFactory;
 
 	private ApplicationContext applicationContext;
+	/**
+	 * JDBC配置文件
+	 */
+	public static Properties JDBC_CONF;
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		// do nothing
 	}
 
-	@Override
-	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-		final Map<String, ReadWriteSplittingDataSource> dataSources = new HashMap<>();
+	/**
+	 * 装载数据库配置
+	 * 
+	 * @return
+	 */
+	private Properties loadDatabaseConfig() {
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE_NAME);
 		if (in != null) {
 			Properties properties = new Properties();
@@ -66,6 +75,20 @@ public class DataSourceScanner implements BeanDefinitionRegistryPostProcessor, A
 			} catch (IOException e) {
 				throw new BeanInitializationException("read property file error!", e);
 			}
+			return properties;
+		} else {
+			if (JDBC_CONF != null) {
+				return JDBC_CONF;
+			}
+			throw new RuntimeException(new NotFoundException("not found " + PROPERTY_FILE_NAME));
+		}
+	}
+
+	@Override
+	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+		final Map<String, ReadWriteSplittingDataSource> dataSources = new HashMap<>();
+		Properties properties = loadDatabaseConfig();
+		if (properties != null) {
 			try {
 				Map<String, Map<DataSourceType, DataSource>> dataSourcesMapping = this.getDataSources(properties);
 				this.registerDataSources(registry, dataSourcesMapping);
@@ -134,6 +157,7 @@ public class DataSourceScanner implements BeanDefinitionRegistryPostProcessor, A
 
 	/**
 	 * 注册链接事物管理器到Spring
+	 * 
 	 * @param registry
 	 */
 	private void registerChaintTransctionManager(BeanDefinitionRegistry registry) {
@@ -162,6 +186,7 @@ public class DataSourceScanner implements BeanDefinitionRegistryPostProcessor, A
 
 	/**
 	 * 根据Properties配置解析得到数据源
+	 * 
 	 * @param properties
 	 * @return
 	 * @throws SQLException
@@ -243,6 +268,7 @@ public class DataSourceScanner implements BeanDefinitionRegistryPostProcessor, A
 
 	/**
 	 * 将数据源注入到Spring中
+	 * 
 	 * @param registry
 	 * @param dataSourcesMapping
 	 */
