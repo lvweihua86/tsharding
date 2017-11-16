@@ -1,5 +1,6 @@
 package com.hivescm.tsharding.config;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,9 +12,12 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 
+import com.hivescm.tsharding.ext.TshardingMapperConfig;
 import com.hivescm.tsharding.utils.ClassNameHelper;
 import com.mogujie.distributed.transction.ChainedTransactionInteceptor;
 import com.mogujie.distributed.transction.DynamicTransctionManagerFactory;
@@ -35,7 +39,10 @@ class EnableConfigRegistry
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
 		Map<String, Object> defaultAttrs = metadata.getAnnotationAttributes(EnableTSharding.class.getName(), true);
-		Set<Class<?>> mappers = registerMapper(defaultAttrs, registry);
+		String[] mapperPackage = (String[]) defaultAttrs.get("mapperPackage");
+		Set<Class<?>> mappers = MapperScannerWithSharding.scanMapper(mapperPackage);
+		mapperConfigProcess(mappers);
+		registerMapper(defaultAttrs, registry);
 		registerEnhancedMappers(defaultAttrs, registry, mappers);
 		registerDataSourceFactory(registry, defaultAttrs);
 		registerDataSourceScanner(registry);
@@ -43,6 +50,26 @@ class EnableConfigRegistry
 		registerMapperHandlerInterceptor(registry, defaultAttrs);
 		registerDynamicTransctionManagerFactory(registry);
 		registerChainedTransactionInteceptor(registry);
+	}
+
+	/**
+	 * Mapper配置处理
+	 * 
+	 * @param mappers
+	 */
+	private void mapperConfigProcess(Set<Class<?>> mappers) {
+		// 使用分库分表的配置文件替换代码中的配置
+		DefaultResourceLoader classPathResource = new DefaultResourceLoader();
+		String value = System.getProperty("mapper.config.path", "classpath:tsharding_mapper_config.xml");
+		try {
+			Resource resource = classPathResource.getResource(value);
+			TshardingMapperConfig config = TshardingMapperConfig.parse(resource);
+			config.modifyAnnotation(mappers);
+		} catch (FileNotFoundException ex) {
+			System.out.println("no config:" + value);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -106,7 +133,7 @@ class EnableConfigRegistry
 	 * @param defaultAttrs
 	 * @param registry
 	 */
-	private Set<Class<?>> registerMapper(Map<String, Object> defaultAttrs, BeanDefinitionRegistry registry) {
+	private void registerMapper(Map<String, Object> defaultAttrs, BeanDefinitionRegistry registry) {
 		String[] mapperPackage = (String[]) defaultAttrs.get("mapperPackage");
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
 				.genericBeanDefinition(MapperScannerWithSharding.class);
@@ -118,8 +145,6 @@ class EnableConfigRegistry
 			definitionBuilder.addPropertyValue("configLocation", defaultAttrs.get("configLocation"));
 		}
 		registry.registerBeanDefinition("MapperScannerWithSharding", definitionBuilder.getBeanDefinition());
-		Set<Class<?>> mappers = MapperScannerWithSharding.scanMapper(mapperPackage);
-		return mappers;
 	}
 
 	/**
