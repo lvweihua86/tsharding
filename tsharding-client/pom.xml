@@ -22,6 +22,13 @@
     </properties>
 
     <dependencies>
+        <!-- xml 解析工具 -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
     	<!-- 链接事务管理器 -->
     	<dependency>
 			<groupId>org.springframework.data</groupId>

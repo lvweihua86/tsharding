@@ -1,7 +1,7 @@
 package com.mogujie.tsharding.filter;
 
 public class HandlerInterceptorAdapterFactory {
-	private static volatile MapperHandlerInterceptor interceptor;
+	private static volatile MapperHandlerInterceptor interceptor=new SimpleMapperHandlerInterceptor();
 
 	/**
 	 * 使用者自行扩展拦截器
