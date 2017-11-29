@@ -12,6 +12,8 @@ import com.hivescm.common.conf.SystemManager;
 import com.mogujie.service.tsharding.bean.UserInfo;
 import com.mogujie.service.tsharding.mapper.UserInfoMapper;
 
+import redis.clients.jedis.Jedis;
+
 /**
  * 单数据库
  * 
@@ -24,9 +26,7 @@ public class OneDatabaseTest {
 	private UserInfoMapper userInfoMapper;
 	static {
 		CacheConfig.slow_times = 0;
-		SystemManager.project_Name = "tsharding-cache";
 	}
-
 	@Test
 	public void insert() {
 		for (int i = 0; i < 1000; i++) {

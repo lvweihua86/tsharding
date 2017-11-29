@@ -60,4 +60,5 @@
 	
 	<!-- Redis client 配置属性 -->
 	<bean class="com.hivescm.cache.config.ConfigurationPropertiesPostProcessor"/>
+	<bean class="com.mogujie.distributed.transction.DynamicTransctionManagerFactory"/>
 </beans>
