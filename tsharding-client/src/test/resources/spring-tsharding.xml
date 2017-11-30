@@ -41,12 +41,14 @@
 
 	<bean name="readWriteSplittingAdvice" class="com.mogujie.trade.db.ReadWriteSplittingAdvice" />
 
-	<!-- 采用@Transactional注解方式使用事务    -->
+	<!-- 采用@Transactional注解方式使用事务  -->
+	
 	<tx:annotation-driven mode="proxy" />
 
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 	<!-- 链接事务管理器 改为程序自动注册 -->
-	<!-- <bean id="userTransactionManager" class="org.springframework.data.transaction.ChainedTransactionManager"> 
+	<!-- 
+	<bean id="userTransactionManager" class="org.springframework.data.transaction.ChainedTransactionManager"> 
 		<constructor-arg> <list> <ref bean="user0TransactionManager" /> <ref bean="user1TransactionManager" 
 		/> </list> </constructor-arg> </bean> -->
 	<!-- 注入拦截器 -->

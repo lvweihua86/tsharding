@@ -51,13 +51,8 @@
 		<constructor-arg> <list> <ref bean="user0TransactionManager" /> <ref bean="user1TransactionManager" 
 		/> </list> </constructor-arg> </bean> -->
 	<!-- 注入拦截器 -->
-	 
-	<bean class="com.mogujie.tsharding.filter.HandlerInterceptorAdapterFactory">
-		<constructor-arg ref="cacheMapperHandlerInterceptor"></constructor-arg>
-	</bean>
 	<bean id="cacheMapperHandlerInterceptor"
 		class="com.hivescm.tsharding.cache.CacheMapperHandlerInterceptor" />
-	
 	<!-- Redis client 配置属性 -->
 	<bean class="com.hivescm.cache.config.ConfigurationPropertiesPostProcessor"/>
 	<bean class="com.mogujie.distributed.transction.DynamicTransctionManagerFactory"/>
