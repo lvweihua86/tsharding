@@ -29,5 +29,4 @@ public class RegisterTshardingCacheInterceptor implements ApplicationContextAwar
 		this.context = applicationContext;
 
 	}
-
 }

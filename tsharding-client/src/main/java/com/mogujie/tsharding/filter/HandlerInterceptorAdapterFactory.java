@@ -9,7 +9,6 @@ public class HandlerInterceptorAdapterFactory {
 	 * @param interceptor
 	 */
 	public static void registerInterceptor(MapperHandlerInterceptor interceptor) {
-		System.out.println("注册拦截器:" + interceptor);
 		HandlerInterceptorAdapterFactory.interceptor = interceptor;
 	}
 
