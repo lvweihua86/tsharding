@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.mogujie.tsharding.filter.HandlerInterceptorAdapterFactory;
 
 @Component
-class RegisterTshardingCacheInterceptor implements ApplicationContextAware {
+public class RegisterTshardingCacheInterceptor implements ApplicationContextAware {
 	private ApplicationContext context;
 
 	@PostConstruct
