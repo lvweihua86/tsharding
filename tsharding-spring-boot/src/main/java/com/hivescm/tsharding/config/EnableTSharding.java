@@ -55,10 +55,10 @@ public @interface EnableTSharding {
 	 */
 	public DataSourceType dataSourceType() default DataSourceType.Hikari;
 
-	/**
-	 * TSharding 拦截器
-	 * 
-	 * @return
-	 */
-	public Class<? extends MapperHandlerInterceptor> interceptor() default CacheMapperHandlerInterceptor.class;
+//	/**
+//	 * TSharding 拦截器
+//	 * 
+//	 * @return
+//	 */
+//	public Class<? extends MapperHandlerInterceptor> interceptor() default CacheMapperHandlerInterceptor.class;
 }

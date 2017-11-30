@@ -27,8 +27,6 @@ import com.mogujie.trade.db.HikariDataSourceFactory;
 import com.mogujie.trade.db.ReadWriteSplittingAdvice;
 import com.mogujie.trade.tsharding.route.orm.MapperScannerWithSharding;
 import com.mogujie.trade.tsharding.route.orm.MapperShardingInitializer;
-import com.mogujie.tsharding.filter.HandlerInterceptorAdapterFactory;
-import com.mogujie.tsharding.filter.MapperHandlerInterceptor;
 
 class EnableConfigRegistry
 		implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
@@ -47,7 +45,7 @@ class EnableConfigRegistry
 		registerDataSourceFactory(registry, defaultAttrs);
 		registerDataSourceScanner(registry);
 		registerReadWriteSplittingAdvice(registry);
-		registerMapperHandlerInterceptor(registry, defaultAttrs);
+//		registerMapperHandlerInterceptor(registry, defaultAttrs);
 		registerDynamicTransctionManagerFactory(registry);
 		registerChainedTransactionInteceptor(registry);
 	}
@@ -96,36 +94,36 @@ class EnableConfigRegistry
 		registry.registerBeanDefinition(name, definitionBuilder.getBeanDefinition());
 	}
 
-	/**
-	 * 注册Mapper拦截器
-	 * 
-	 * @param registry
-	 */
-	@SuppressWarnings("unchecked")
-	private void registerMapperHandlerInterceptor(BeanDefinitionRegistry registry, Map<String, Object> defaultAttrs) {
-		String interceptorName = (String) defaultAttrs.get("interceptor");
-		if (interceptorName == null) {
-			return;// 禁用拦截器
-		}
-		Class<? extends MapperHandlerInterceptor> interceptor = null;
-		try {
-			interceptor = (Class<? extends MapperHandlerInterceptor>) Class.forName(interceptorName);
-
-			BeanDefinitionBuilder interceptorBuilder = BeanDefinitionBuilder.genericBeanDefinition(interceptor);
-			String name = interceptor.getClass().getSimpleName();
-			registry.registerBeanDefinition(name, interceptorBuilder.getBeanDefinition());
-
-			BeanDefinitionBuilder adapterBuilder = BeanDefinitionBuilder
-					.genericBeanDefinition(HandlerInterceptorAdapterFactory.class);
-			adapterBuilder.addConstructorArgReference(name);
-			String handleName = HandlerInterceptorAdapterFactory.class.getSimpleName();
-			registry.registerBeanDefinition(handleName, adapterBuilder.getBeanDefinition());
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-
-	}
+//	/**
+//	 * 注册Mapper拦截器
+//	 * 
+//	 * @param registry
+//	 */
+//	@SuppressWarnings("unchecked")
+//	private void registerMapperHandlerInterceptor(BeanDefinitionRegistry registry, Map<String, Object> defaultAttrs) {
+////		String interceptorName = (String) defaultAttrs.get("interceptor");
+////		if (interceptorName == null) {
+////			return;// 禁用拦截器
+////		}
+////		Class<? extends MapperHandlerInterceptor> interceptor = null;
+////		try {
+////			interceptor = (Class<? extends MapperHandlerInterceptor>) Class.forName(interceptorName);
+////
+////			BeanDefinitionBuilder interceptorBuilder = BeanDefinitionBuilder.genericBeanDefinition(interceptor);
+////			String name = interceptor.getClass().getSimpleName();
+////			registry.registerBeanDefinition(name, interceptorBuilder.getBeanDefinition());
+////
+////			BeanDefinitionBuilder adapterBuilder = BeanDefinitionBuilder
+////					.genericBeanDefinition(HandlerInterceptorAdapterFactory.class);
+////			adapterBuilder.addConstructorArgReference(name);
+////			String handleName = HandlerInterceptorAdapterFactory.class.getSimpleName();
+////			registry.registerBeanDefinition(handleName, adapterBuilder.getBeanDefinition());
+////
+////		} catch (ClassNotFoundException e) {
+////			e.printStackTrace();
+////		}
+//
+//	}
 
 	/**
 	 * 注册Mapper
