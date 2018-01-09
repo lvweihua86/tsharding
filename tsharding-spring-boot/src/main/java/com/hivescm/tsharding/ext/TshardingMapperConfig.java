@@ -1,6 +1,5 @@
 package com.hivescm.tsharding.ext;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -14,7 +13,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.core.io.Resource;
 
 import com.hivescm.common.conf.SystemManager;
 import com.mogujie.trade.db.DataSourceRouting;
@@ -44,10 +42,6 @@ public final class TshardingMapperConfig {
 			return config;
 		}
 		throw new IllegalArgumentException("无效的配置文件");
-	}
-
-	public static TshardingMapperConfig parse(Resource resource) throws DocumentException, IOException {
-		return parse(resource.getInputStream());
 	}
 
 	/**

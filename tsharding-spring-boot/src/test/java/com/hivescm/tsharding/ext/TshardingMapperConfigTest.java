@@ -26,7 +26,7 @@ public class TshardingMapperConfigTest {
 	public void test_parse_xmlAsPojo() throws DocumentException, IOException {
 		DefaultResourceLoader classPathResource = new DefaultResourceLoader();
 		Resource resource = classPathResource.getResource("classpath:tsharding_mapper_config.xml");
-		TshardingMapperConfig config = TshardingMapperConfig.parse(resource);
+		TshardingMapperConfig config = TshardingMapperConfig.parse(resource.getInputStream());
 		Environment environment = config.getEnvironment("dev");
 		Assert.assertFalse(environment.exists(this.getClass()));
 		Assert.assertNull(environment.getMapper(this.getClass()));
@@ -48,7 +48,7 @@ public class TshardingMapperConfigTest {
 		Assert.assertEquals("a", routing.dataSource());
 		DefaultResourceLoader classPathResource = new DefaultResourceLoader();
 		Resource resource = classPathResource.getResource("classpath:tsharding_mapper_config.xml");
-		TshardingMapperConfig config = TshardingMapperConfig.parse(resource);
+		TshardingMapperConfig config = TshardingMapperConfig.parse(resource.getInputStream());
 		Environment environment = config.getEnvironment("dev");
 		Assert.assertTrue(environment.exists(AMapper.class));
 		Mapper mapper = environment.getMapper(AMapper.class);

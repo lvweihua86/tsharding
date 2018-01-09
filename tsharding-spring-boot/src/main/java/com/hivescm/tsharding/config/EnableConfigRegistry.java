@@ -1,9 +1,7 @@
 package com.hivescm.tsharding.config;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +12,6 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -60,14 +57,10 @@ class EnableConfigRegistry
 	 * @param mappers
 	 */
 	private void mapperConfigProcess(Set<Class<?>> mappers) {
-		// 使用分库分表的配置文件替换代码中的配置
-		// DefaultResourceLoader classPathResource = new DefaultResourceLoader();
-		// String value = System.getProperty("mapper.config.path",
-		// "classpath:tsharding_mapper_config.xml");
 		try {
-			Resource resource = getResource();
-			if (resource != null) {
-				TshardingMapperConfig config = TshardingMapperConfig.parse(resource);
+			InputStream inputStream = getResource();
+			if (inputStream != null) {
+				TshardingMapperConfig config = TshardingMapperConfig.parse(inputStream);
 				config.modifyAnnotation(mappers);
 			}
 		} catch (Exception e) {
@@ -75,14 +68,18 @@ class EnableConfigRegistry
 		}
 	}
 
-	private Resource getResource() {
+	private InputStream getResource() {
 		String value = System.getProperty("mapper.config.path", "classpath:tsharding_mapper_config.xml");
 		try {
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-			return resolver.getResource(value);
+			Resource resource = resolver.getResource(value);
+			InputStream inputStream = resource.getInputStream();
+			return inputStream;
+		} catch (java.io.FileNotFoundException e) {
+			TShardingLog.getLogger().info("no config:" + value);
+			return null;
 		} catch (Exception e) {
-			TShardingLog.getLogger().info("load config:" + value + " " + e.getMessage());
-			// TShardingLog.error("mapperConfigProcess error:", e);
+			TShardingLog.error("mapperConfigProcess error:", e);
 			return null;
 		}
 	}
