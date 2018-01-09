@@ -1,6 +1,7 @@
 package com.hivescm.tsharding.ext;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -27,10 +28,10 @@ import com.mogujie.trade.utils.TShardingLog;
 public final class TshardingMapperConfig {
 	List<Environment> environments = new ArrayList<>();
 
-	public static TshardingMapperConfig parse(String path) throws DocumentException {
+	public static TshardingMapperConfig parse(InputStream inputStream) throws DocumentException {
 		TshardingMapperConfig config = new TshardingMapperConfig();
 		SAXReader saxReader = new SAXReader();
-		Document root = saxReader.read(path);
+		Document root = saxReader.read(inputStream);
 		if ("environments".equalsIgnoreCase(root.getRootElement().getName())) {
 			Element nodeElement = root.getRootElement();
 			@SuppressWarnings("unchecked")
@@ -46,7 +47,7 @@ public final class TshardingMapperConfig {
 	}
 
 	public static TshardingMapperConfig parse(Resource resource) throws DocumentException, IOException {
-		return parse(resource.getFile().getAbsolutePath());
+		return parse(resource.getInputStream());
 	}
 
 	/**
