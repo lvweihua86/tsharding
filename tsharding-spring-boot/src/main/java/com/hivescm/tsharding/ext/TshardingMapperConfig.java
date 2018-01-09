@@ -17,6 +17,7 @@ import org.springframework.core.io.Resource;
 
 import com.hivescm.common.conf.SystemManager;
 import com.mogujie.trade.db.DataSourceRouting;
+import com.mogujie.trade.utils.TShardingLog;
 
 /**
  * Tsharding配置文件处理器
@@ -224,7 +225,7 @@ public final class TshardingMapperConfig {
 				Mapper mapper = environment.getMapper(clazz);
 				DataSourceRouting routing = clazz.getAnnotation(DataSourceRouting.class);
 				mapper.modifyAnnotation(routing);
-				System.out.println("当前系统环境：" + env + "|修改Mapper:" + clazz);
+				TShardingLog.getLogger().warn("当前系统环境：" + env + "|修改Mapper:" + clazz);
 			}
 		}
 	}
