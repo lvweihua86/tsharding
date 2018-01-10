@@ -1,5 +1,7 @@
 package com.hivescm.tsharding.config;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +61,9 @@ class EnableConfigRegistry
 	 */
 	private void mapperConfigProcess(Set<Class<?>> mappers) {
 		try {
+			if (TShardingLog.getLogger().isDebugEnabled()) {
+				dump();
+			}
 			InputStream inputStream = getResource();
 			if (inputStream != null) {
 				TshardingMapperConfig config = TshardingMapperConfig.parse(inputStream);
@@ -69,14 +74,27 @@ class EnableConfigRegistry
 		}
 	}
 
+	private void dump() {
+		try {
+			InputStream inputStream = getResource();
+			if (inputStream != null) {
+				int length = inputStream.available();
+				byte[] data = new byte[length];
+				inputStream.read(data);
+				TShardingLog.getLogger().info("tsharding_mapper_config.xml data:" + new String(data));
+				inputStream.close();
+			}
+		} catch (Exception e) {
+			TShardingLog.error("dump error:", e);
+		}
+	}
+
 	private InputStream getResource() {
 		String value = System.getProperty("mapper.config.path", "classpath:tsharding_mapper_config.xml");
 		try {
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 			Resource resource = resolver.getResource(value);
-			TShardingLog.getLogger().info("readFile:" + resource.getFile().getAbsolutePath());
-			InputStream inputStream = resource.getInputStream();
-			return inputStream;
+			return resource.getInputStream();
 		} catch (java.io.FileNotFoundException e) {
 			TShardingLog.getLogger().info("no config:" + value);
 			return null;
