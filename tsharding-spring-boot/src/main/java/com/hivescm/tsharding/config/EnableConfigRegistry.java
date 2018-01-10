@@ -17,6 +17,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.AnnotationMetadata;
 
+import com.hivescm.common.conf.SystemManager;
 import com.hivescm.tsharding.ext.TshardingMapperConfig;
 import com.hivescm.tsharding.utils.ClassNameHelper;
 import com.mogujie.distributed.transction.ChainedTransactionInteceptor;
@@ -73,6 +74,7 @@ class EnableConfigRegistry
 		try {
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 			Resource resource = resolver.getResource(value);
+			TShardingLog.getLogger().info("readFile:" + resource.getFile().getAbsolutePath());
 			InputStream inputStream = resource.getInputStream();
 			return inputStream;
 		} catch (java.io.FileNotFoundException e) {
@@ -222,6 +224,7 @@ class EnableConfigRegistry
 
 	@Override
 	public void setEnvironment(Environment environment) {
+		SystemManager.initEnvironment(environment);
 	}
 
 	@Override
