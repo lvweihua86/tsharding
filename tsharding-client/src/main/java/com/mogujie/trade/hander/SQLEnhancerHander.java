@@ -6,11 +6,6 @@ package com.mogujie.trade.hander;
  * @author SHOUSHEN LUAN
  */
 public interface SQLEnhancerHander {
-	/**
-	 * 获取目标表
-	 * @param value 分表后缀值.范围:0~tableN-1
-	 */
-	public String getTable(long value);
 
 	/**
 	 * 是否存在需要替换的表名称

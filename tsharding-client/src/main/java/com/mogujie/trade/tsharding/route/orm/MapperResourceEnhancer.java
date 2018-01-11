@@ -37,8 +37,8 @@ public class MapperResourceEnhancer extends MapperEnhancer {
 		DataSourceRouting sharding = clazzClass.getAnnotation(DataSourceRouting.class);
 		Class<?> enhancerHanderClass = sharding.sqlEnhancerHander();
 		try {
-			SQLEnhancerHander hander = (SQLEnhancerHander) enhancerHanderClass.getConstructor(Class.class).newInstance(
-					getMapperClass(ms.getId()));
+			SQLEnhancerHander hander = (SQLEnhancerHander) enhancerHanderClass.getConstructor(Class.class)
+					.newInstance(getMapperClass(ms.getId()));
 			return hander;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
@@ -48,6 +48,7 @@ public class MapperResourceEnhancer extends MapperEnhancer {
 
 	public SqlSource enhancedShardingSQL(MappedStatement ms, Configuration configuration, Long shardingPara) {
 		SQLEnhancerHander hander = getShardingTableHander(ms);
+		TShardingLog.getLogger().debug(ms.getId());
 		try {
 			if (ms.getSqlSource() instanceof DynamicSqlSource) {
 				DynamicSqlSource sqlSource = (DynamicSqlSource) ms.getSqlSource();
@@ -68,7 +69,8 @@ public class MapperResourceEnhancer extends MapperEnhancer {
 						StaticTextSqlNode textSqlNode = (StaticTextSqlNode) node;
 						String text = (String) textField.get(textSqlNode);
 						if (hander.hasReplace(text)) {
-							newSqlNodesList.add(new StaticTextSqlNode(hander.format(text, shardingPara)));
+							String sql = hander.format(text, shardingPara);
+							newSqlNodesList.add(new StaticTextSqlNode(sql));
 							continue;
 						}
 					}

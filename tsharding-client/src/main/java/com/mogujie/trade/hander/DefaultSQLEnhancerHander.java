@@ -1,7 +1,11 @@
 package com.mogujie.trade.hander;
 
+import java.util.Set;
+
 import com.mogujie.route.rule.RouteRuleFactory;
 import com.mogujie.trade.db.DataSourceRouting;
+import com.mogujie.trade.utils.ReplaceTableName;
+import com.mogujie.trade.utils.TShardingLog;
 
 public class DefaultSQLEnhancerHander implements SQLEnhancerHander {
 	protected Class<?> mappedClass;
@@ -12,7 +16,6 @@ public class DefaultSQLEnhancerHander implements SQLEnhancerHander {
 		this.routing = mappedClass.getAnnotation(DataSourceRouting.class);
 	}
 
-	@Override
 	public String getTable(long value) {
 		if (routing.tables() > 1) {
 			String table = routing.table();
@@ -25,29 +28,37 @@ public class DefaultSQLEnhancerHander implements SQLEnhancerHander {
 
 	@Override
 	public boolean hasReplace(String sql) {
-		return sql.contains(routing.table());
+		Set<Class<?>> mappers = MapperFactory.getEnhanceMappers();
+		for (Class<?> mapper : mappers) {
+			DataSourceRouting routing = mapper.getAnnotation(DataSourceRouting.class);
+			if (routing.tables() > 1) {
+				String table = routing.table();
+				if (ReplaceTableName.getInstance().matches(sql, table)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public String format(String sql, long value) {
-		sql = format(sql);
-		String newTableName = getTable(value);
-		sql = sql.replace(routing.table(), newTableName);
+		TShardingLog.getLogger().debug("raw.SQL:" + sql);
+		sql = sql.replaceAll("\n", " ");
+		sql = sql.replaceAll("\t", " ");
+		sql = sql.replaceAll("  ", " ");
+		Set<Class<?>> mappers = MapperFactory.getEnhanceMappers();
+		for (Class<?> mapper : mappers) {
+			DataSourceRouting routing = mapper.getAnnotation(DataSourceRouting.class);
+			if (routing.tables() > 1) {
+				String table = routing.table();
+				String tableSuffix = RouteRuleFactory.getRouteRule(mapper).fillBit(value);
+				String newTable = table + tableSuffix;
+				sql = ReplaceTableName.getInstance().replace(sql, table, newTable);
+			}
+		}
+		TShardingLog.getLogger().debug("SQL:" + sql);
 		return sql;
 	}
 
-	/**
-	 * 格式化SQL语句
-	 * 
-	 * @param sql
-	 * @return
-	 */
-	private String format(String sql) {
-		if (sql != null) {
-			sql = sql.replace('\n', ' ');
-			sql = sql.replace('\t', ' ');
-			sql = sql.replace("  ", " ");
-		}
-		return sql;
-	}
 }

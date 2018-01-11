@@ -4,22 +4,32 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.mogujie.trade.db.DataSourceRouting;
 import com.mogujie.trade.tsharding.annotation.parameter.ShardingParam;
+import com.mogujie.trade.utils.TShardingLog;
 
 /**
  * Mapper factory
+ * 
  * @author SHOUSHEN LUAN
  * @date 2016年12月19日
  */
 public class MapperFactory {
+	private static final Set<Class<?>> MAPPERS = new HashSet<>();
+	/**
+	 * 分库分表Mapper
+	 */
+	private static final Set<Class<?>> ENHANCE_MAPPERS = new HashSet<>();
 	private static Map<String, ShardingHanderEntry> CACHE = Collections
 			.synchronizedMap(new HashMap<String, ShardingHanderEntry>());
 
 	/**
 	 * 根据Mapper class 和调用method 获取{@link ShardingHanderEntry}
+	 * 
 	 * @param mappendClass
 	 * @param method
 	 * @return
@@ -95,6 +105,7 @@ public class MapperFactory {
 
 		/**
 		 * 获取路由参数
+		 * 
 		 * @param args
 		 * @return
 		 */
@@ -109,9 +120,25 @@ public class MapperFactory {
 
 	/**
 	 * register Mapper interface
+	 * 
 	 * @param clazz MapperClass
 	 */
 	public static void registerMapper(Class<?> clazz) {
+		DataSourceRouting routing = clazz.getAnnotation(DataSourceRouting.class);
+		if (routing != null) {
+			TShardingLog.getLogger().debug("注册Mapper:" + clazz);
+			MAPPERS.add(clazz);
+			if (routing.tables() > 1 || routing.databases() > 1) {
+				ENHANCE_MAPPERS.add(clazz);
+				TShardingLog.getLogger().debug("注册分库分表Mapper:" + clazz);
+			}
+		} else {
+			throw new IllegalArgumentException("无效的Mapper:`" + clazz + "`");
+		}
+		registerMethod(clazz);
+	}
+
+	private static void registerMethod(Class<?> clazz) {
 		Method[] methods = clazz.getMethods();
 		for (int i = 0; i < methods.length; i++) {
 			try {
@@ -124,6 +151,7 @@ public class MapperFactory {
 
 	/**
 	 * register Mapper interface method
+	 * 
 	 * @param clazz MapperClass
 	 * @param method MapperClass.method
 	 * @throws IllegalAccessException
@@ -132,4 +160,18 @@ public class MapperFactory {
 		String name = clazz.getName() + "." + method.getName();
 		CACHE.put(name, new ShardingHanderEntry(clazz, method));
 	}
+
+	/**
+	 * 获取所有增强Mapper
+	 * 
+	 * @return
+	 */
+	public static Set<Class<?>> getEnhanceMappers() {
+		return ENHANCE_MAPPERS;
+	}
+
+	public static Set<Class<?>> getMappers() {
+		return MAPPERS;
+	}
+
 }
