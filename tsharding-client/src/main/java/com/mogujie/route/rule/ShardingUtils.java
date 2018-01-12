@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
@@ -93,6 +94,10 @@ public class ShardingUtils {
 		if (shardingParam.getClass().isPrimitive()) {
 			return shardingParam;
 		} else {
+			if(Map.class.isAssignableFrom(shardingParam.getClass())){
+				Map<String, Object>map=(Map<String, Object>)shardingParam;
+				return map.get(fieldName);
+			}
 			Field field = ReflectUtil.getDeclaredField(shardingParam, fieldName);
 			if (field != null) {
 				field.setAccessible(true);
