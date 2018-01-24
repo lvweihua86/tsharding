@@ -25,14 +25,20 @@ public class HikariDataSourceFactory implements DataSourceFactory<HikariDataSour
         hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
         hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
         hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        hikariConfig.setIdleTimeout(30000);
+        hikariConfig.setMaximumPoolSize(config.getMaxPoolSize());
+        hikariConfig.setMinimumIdle(config.getMinPoolSize());
+        hikariConfig.setConnectionTimeout(3000);
+        hikariConfig.setMaxLifetime(150000);
         if (config.getDriver() != null) {
             hikariConfig.setDriverClassName(config.getDriver());
         }
         HikariDataSource ds = new HikariDataSource(hikariConfig);
-        ds.setMaximumPoolSize(config.getMaxPoolSize());
-        ds.setMinimumIdle(config.getMinPoolSize());
-        ds.setConnectionTimeout(3000);
-        ds.setIdleTimeout(30000);
+//        ds.setMaximumPoolSize(config.getMaxPoolSize());
+//        ds.setMinimumIdle(config.getMinPoolSize());
+//        ds.setConnectionTimeout(3000);
+//        ds.setIdleTimeout(30000);
+//        ds.setMaxLifetime(150000);
         return ds;
     }
 
