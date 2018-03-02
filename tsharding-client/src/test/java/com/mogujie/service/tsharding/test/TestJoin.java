@@ -1,5 +1,8 @@
 package com.mogujie.service.tsharding.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +24,12 @@ public class TestJoin {
 	public void test_join() {
 		try {
 			long start = System.currentTimeMillis();
-			for (int i = 0; i < 10; i++) {
-				Object value = userOrderMapper.join_test(i);
-				System.out.println(value);
+			for (int i =0; i < 10; i++) {
+				List<Object>list=new ArrayList<>();
+				list.add(1);
+				list.add(2);
+				int value = userOrderMapper.join_test(5,1,list);
+				System.out.println("返回结果:"+value);
 			}
 			System.out.println("use time:" + (System.currentTimeMillis() - start));
 		} catch (Exception e) {
