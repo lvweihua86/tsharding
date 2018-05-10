@@ -3,15 +3,18 @@
     <environment name="dev">
         <Mappers>
             <Mapper class="+com.hivescm.*Mapper"
-                    dataSource="db_01" table="tab_0001" tables="" databases="888"
+                    dataSource="db_01" table="tab_0001" tables="1" databases="888"
                     isReadWriteSplitting="true"/>
             <Mapper class="+com.hivescm.*Test"
-                    dataSource="db_01" table="tab_0001" tables="" databases="888"
+                    dataSource="db_01" table="tab_0001" tables="1" databases="888"
                     isReadWriteSplitting="true"/>
             <Mapper class="com.hivescm.tsharding.ext.AMapper"
                     dataSource="db_01" table="tab_0001" tables="666" databases="888"
                     isReadWriteSplitting="true"/>
             <Mapper class="com.hivescm.tsharding.ext.BMapper"
+                    dataSource="db_02" table="tab_x" tables="1" databases="1"
+                    isReadWriteSplitting="true"/>
+            <Mapper class="?com.hivescm.tsharding.ext.CMapper"
                     dataSource="db_02" table="tab_x" tables="1" databases="1"
                     isReadWriteSplitting="true"/>
         </Mappers>

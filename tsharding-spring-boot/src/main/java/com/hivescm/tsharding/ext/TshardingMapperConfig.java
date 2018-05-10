@@ -1,5 +1,14 @@
 package com.hivescm.tsharding.ext;
 
+import com.hivescm.common.conf.SystemManager;
+import com.mogujie.trade.db.DataSourceRouting;
+import com.mogujie.trade.utils.TShardingLog;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.springframework.util.StringUtils;
+
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -8,16 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-
-import com.hivescm.common.conf.SystemManager;
-import com.mogujie.trade.db.DataSourceRouting;
-import com.mogujie.trade.utils.TShardingLog;
-import org.springframework.util.StringUtils;
 
 /**
  * Tsharding配置文件处理器
@@ -118,7 +117,8 @@ public final class TshardingMapperConfig {
      * @author SHOUSHEN LUAN
      */
     public static class Mapper {
-        static final String PREFIX = "+";
+        private static final String REG_MODE_PREFIX = "+";
+        private static final String OPTIONAL_MODE_PREFIX = "?";
         Class<?> mapperClazz;
         String mapperClassRegex;
         String dataSource;
@@ -126,22 +126,31 @@ public final class TshardingMapperConfig {
         String table;
         Integer tables;
         Boolean isReadWriteSplitting;
+        boolean isRegMode = false;
+        boolean isOptionalMode = false;
 
         void parserMapperClass(Element element) {
             String value = element.attributeValue("class");
             if (value == null || value.trim().length() == 0) {
                 throw new IllegalArgumentException("<Mapper class='必须的'/>");
             }
-            if (value.startsWith(PREFIX)) {
+            if (value.startsWith(REG_MODE_PREFIX)) {
+                isRegMode = true;
                 mapperClassRegex = value.substring(1);
             } else {
+                if (value.startsWith(OPTIONAL_MODE_PREFIX)) {
+                    isOptionalMode = true;
+                    value = value.substring(1);
+                }
                 try {
                     this.mapperClazz = Class.forName(value.trim());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    throw new IllegalArgumentException("<Mapper class='" + value + "'... 无效的Class");
+                } catch (Throwable ex) {
+                    if (!isOptionalMode) {
+                        ex.printStackTrace();
+                        throw new IllegalArgumentException("<Mapper class='" + value + "'... 无效的Class");
+                    }
                 }
-                if (!this.mapperClazz.isInterface()) {
+                if (!isOptionalMode && !this.mapperClazz.isInterface()) {
                     throw new IllegalArgumentException("<Mapper class='" + value + "'... 不合法的Class");
                 }
             }
