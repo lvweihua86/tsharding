@@ -1,6 +1,6 @@
 package com.mogujie.trade.tsharding.annotation;
 
-import com.mogujie.trade.tsharding.route.orm.MapperResourceEnhancer;
+import com.mogujie.trade.tsharding.route.orm.MapperResourceEnhancerNew;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ShardingExtensionMethod {
-	Class<?> type() default MapperResourceEnhancer.class;
+	Class<?> type() default MapperResourceEnhancerNew.class;
 
 	String method() default "enhancedShardingSQL";
 }
