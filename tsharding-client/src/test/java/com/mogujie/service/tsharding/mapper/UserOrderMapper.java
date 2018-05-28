@@ -20,7 +20,7 @@ public interface UserOrderMapper {
 	 * @param ids
 	 * @return
 	 */
-	@ShardingExtensionMethod(type = MapperResourceEnhancerNew.class)
+	@ShardingExtensionMethod
 	public int join_test(@Param("test") @ShardingParam long test// 路由参数
 			, @Param("id") long id, // 用户ID
 			@Param("ids") List<?> ids);
