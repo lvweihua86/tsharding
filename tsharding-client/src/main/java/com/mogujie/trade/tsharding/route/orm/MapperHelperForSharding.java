@@ -142,7 +142,9 @@ public class MapperHelperForSharding {
             }
         }
         if (templateClass == null || !MapperEnhancer.class.isAssignableFrom(templateClass)) {
-            throw new RuntimeException("接口中不存在包含type为MapperTemplate的Provider注解，这不是一个合法的通用Mapper接口类!");
+            String templateClassName = templateClass == null ? "<null>" : templateClass.getCanonicalName();
+            throw new RuntimeException("接口中不存在包含type为MapperTemplate的Provider注解，这不是一个合法的通用Mapper接口类!mapperClass="
+                    + mapperClass.getCanonicalName() + ";templateClass=" + templateClassName);
         }
         MapperEnhancer mapperEnhancer = null;
         try {
