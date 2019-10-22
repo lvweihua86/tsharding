@@ -10,7 +10,7 @@
     <properties>
         <mybatis.version>3.2.8</mybatis.version>
         <mybatis-spring.version>1.2.2</mybatis-spring.version>
-        <spring.version>4.0.6.RELEASE</spring.version>
+        <spring.version>5.2.0.RELEASE</spring.version>
         <junit.version>4.11</junit.version>
         <javassist.version>3.19.0-GA</javassist.version>
        <!--  <fastjson.version>1.2.28</fastjson.version> -->
